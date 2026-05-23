@@ -3,7 +3,7 @@
   "displayName": "FFT Ocean Extension",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "planned",
+  "status": "source-staged",
   "kind": "code-extension",
   "activation": "package-manager-opt-in",
   "summary": "FFT ocean simulation code extension, excluded from minimal EpochEngine clones.",
@@ -16,7 +16,7 @@
   "source": {
     "repo": "https://github.com/Autodidac/EpochEngineExtensions",
     "path": "packages/fft_ocean",
-    "provenance": "planned source extension"
+    "provenance": "initial renderer-neutral C++23 FFT ocean source staged in this package"
   },
   "engineBoundary": {
     "epochPackageId": "fft_ocean",
@@ -36,9 +36,24 @@
   },
   "build": {
     "humanGated": true,
-    "commands": []
+    "sourceFiles": [
+      "CMakeLists.txt",
+      "include/epoch/extensions/fft_ocean/fft_ocean.hpp",
+      "src/fft_ocean.cpp",
+      "tests/fft_ocean_self_test.cpp"
+    ],
+    "targets": [
+      "epoch_extension_fft_ocean",
+      "epoch_extension_fft_ocean_self_test"
+    ],
+    "commands": [
+      "cmake -S packages/fft_ocean -B cache/packages/fft_ocean/build",
+      "cmake --build cache/packages/fft_ocean/build --target epoch_extension_fft_ocean_self_test",
+      "cache/packages/fft_ocean/build/epoch_extension_fft_ocean_self_test"
+    ]
   },
   "notes": [
-    "Keep separate from Forest Factory and core voxel/path tracing contracts."
+    "Keep separate from Forest Factory and core voxel/path tracing contracts.",
+    "Source owns deterministic spectrum generation, inverse FFT evaluation, renderer-neutral samples, normals, displacement, and foam hints."
   ]
 }

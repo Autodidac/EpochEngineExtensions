@@ -86,6 +86,18 @@ def validate_manifest(path: pathlib.Path) -> list[str]:
         if package_id and cache_root != f"cache/packages/{package_id}":
             errors.append(f"{path}: expectedCacheRoot should be cache/packages/{package_id}")
 
+    build = manifest.get("build")
+    if isinstance(build, dict):
+        source_files = build.get("sourceFiles", [])
+        if source_files is not None:
+            if not isinstance(source_files, list):
+                errors.append(f"{path}: build.sourceFiles must be an array when present")
+            else:
+                for source_file in source_files:
+                    source_path = path.parent / str(source_file)
+                    if not source_path.is_file():
+                        errors.append(f"{path}: declared build source file is missing: {source_file}")
+
     script = manifest.get("script")
     if manifest.get("kind") in SCRIPTED_SOURCE_KINDS:
         if not isinstance(script, dict):

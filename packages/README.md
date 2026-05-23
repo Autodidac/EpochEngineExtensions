@@ -21,3 +21,5 @@ Required first-pass rules:
 - Build/run commands are human-gated and must produce visible evidence.
 - Unreviewed source extensions remain `status: "planned"` until the package has
   reviewed source, a compiling adapter, and visible Package Manager evidence.
+- `fft_ocean` is the first source-staged package: it includes real C++23 ocean
+  simulation source and a self-test target instead of only a manifest.

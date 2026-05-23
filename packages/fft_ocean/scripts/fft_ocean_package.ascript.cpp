@@ -12,9 +12,9 @@ namespace
     constexpr Operation kOperations[] = {
         { OperationKind::HumanApprovalGate, "Confirm FFT ocean package", "FFT ocean is optional and belongs in cache/packages, not the minimal engine clone.", true },
         { OperationKind::FetchGitSource, "Fetch package source", "Fetch the reviewed FFT ocean source into cache/packages/fft_ocean/source/.", true },
-        { OperationKind::StageCachePackage, "Stage ocean adapter", "Stage a renderer-neutral adapter that can be previewed in the editor.", true },
+        { OperationKind::StageCachePackage, "Stage ocean source", "Stage include/, src/, tests/, and CMakeLists.txt into cache/packages/fft_ocean/source/.", true },
         { OperationKind::ConfigureBuild, "Configure ocean preview", "Configure the package preview without altering core renderer defaults.", true },
-        { OperationKind::CompileAdapter, "Compile ocean preview", "Build the FFT ocean adapter through the Package Manager gate.", true },
+        { OperationKind::CompileAdapter, "Compile ocean preview", "Build epoch_extension_fft_ocean_self_test through the Package Manager gate.", true },
         { OperationKind::RegisterLivePreview, "Register ocean preview", "Expose the live ocean preview after visible build evidence exists.", true }
     };
 
