@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Adam Rushford
+
 from __future__ import annotations
 
 import json
@@ -10,6 +13,8 @@ PACKAGES = ROOT / "packages"
 REQUIRED = {
     "id",
     "displayName",
+    "manifestLicense",
+    "manifestCopyright",
     "status",
     "kind",
     "activation",
@@ -63,6 +68,12 @@ def validate_manifest(path: pathlib.Path) -> list[str]:
     package_id = manifest.get("id")
     if package_id and path.parent.name != package_id:
         errors.append(f"{path}: folder name must match id '{package_id}'")
+
+    if manifest.get("manifestLicense") != "MIT":
+        errors.append(f"{path}: manifestLicense must be MIT")
+
+    if "Adam Rushford" not in str(manifest.get("manifestCopyright", "")):
+        errors.append(f"{path}: manifestCopyright must name Adam Rushford")
 
     boundary = manifest.get("engineBoundary")
     if isinstance(boundary, dict):

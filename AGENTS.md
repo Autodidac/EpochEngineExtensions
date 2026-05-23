@@ -1,5 +1,8 @@
 # Agent Notes
 
+<!-- SPDX-License-Identifier: MIT -->
+<!-- Copyright (c) 2025 Adam Rushford -->
+
 - This repository is the optional package source home for EpochEngine.
 - Do not copy package source into EpochEngine mainline unless a reviewed subset
   has a stable engine API boundary, provenance, build evidence, and a promotion

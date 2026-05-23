@@ -1,5 +1,8 @@
 # Epoch Engine Extensions
 
+<!-- SPDX-License-Identifier: MIT -->
+<!-- Copyright (c) 2025 Adam Rushford -->
+
 Optional package source and package manifests for EpochEngine.
 
 EpochEngine keeps the lean core runtime, editor, package descriptors, security
@@ -41,3 +44,9 @@ software project, single-player game, or minimal generated engine clone.
 The validator is intentionally small and standard-library only. It checks that
 package manifests are present, deterministic JSON, security-gated where needed,
 and aligned with EpochEngine package policy.
+
+## License
+
+Repository files are licensed under the EpochEngineExtensions MIT license unless
+another license is explicitly stated. Package manifests describe package source
+provenance separately; a manifest license does not relicense upstream source.

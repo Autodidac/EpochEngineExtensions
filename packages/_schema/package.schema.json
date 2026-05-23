@@ -5,6 +5,8 @@
   "required": [
     "id",
     "displayName",
+    "manifestLicense",
+    "manifestCopyright",
     "status",
     "kind",
     "activation",
@@ -15,6 +17,8 @@
   "properties": {
     "id": { "type": "string" },
     "displayName": { "type": "string" },
+    "manifestLicense": { "type": "string" },
+    "manifestCopyright": { "type": "string" },
     "status": { "type": "string" },
     "kind": { "type": "string" },
     "activation": { "type": "string" },

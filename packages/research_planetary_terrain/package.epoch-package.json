@@ -1,6 +1,8 @@
 {
   "id": "research_planetary_terrain",
   "displayName": "Research Planetary Terrain",
+  "manifestLicense": "MIT",
+  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
   "status": "planned",
   "kind": "downloadable-source",
   "activation": "downloaded-opt-in",

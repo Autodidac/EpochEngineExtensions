@@ -1,6 +1,8 @@
 {
   "id": "engine_network_runtime",
   "displayName": "Engine Network Runtime",
+  "manifestLicense": "MIT",
+  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
   "status": "planned",
   "kind": "network-runtime",
   "activation": "project-opt-in",

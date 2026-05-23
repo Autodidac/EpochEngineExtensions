@@ -1,6 +1,8 @@
 {
   "id": "research_voxel_planetoid_vulkan",
   "displayName": "Research Voxel Planetoid Vulkan",
+  "manifestLicense": "MIT",
+  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
   "status": "provenance-only",
   "kind": "research-prototype",
   "activation": "manual-research-import",

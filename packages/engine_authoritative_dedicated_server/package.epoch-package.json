@@ -1,6 +1,8 @@
 {
   "id": "engine_authoritative_dedicated_server",
   "displayName": "Optional Authoritative Dedicated Server",
+  "manifestLicense": "MIT",
+  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
   "status": "planned",
   "kind": "headless-server",
   "activation": "headless-server-opt-in",

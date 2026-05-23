@@ -1,6 +1,8 @@
 {
   "id": "engine_client_listen_server",
   "displayName": "Client Listen Server",
+  "manifestLicense": "MIT",
+  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
   "status": "planned",
   "kind": "network-runtime",
   "activation": "client-listen-server-opt-in",

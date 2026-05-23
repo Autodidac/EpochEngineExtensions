@@ -1,5 +1,8 @@
 # Package Security And Import Policy
 
+<!-- SPDX-License-Identifier: MIT -->
+<!-- Copyright (c) 2025 Adam Rushford -->
+
 EpochEngineExtensions exists to keep optional package source out of the minimal
 EpochEngine clone while still making those packages reviewable and repeatable.
 

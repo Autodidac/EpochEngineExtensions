@@ -1,5 +1,8 @@
 # Packages
 
+<!-- SPDX-License-Identifier: MIT -->
+<!-- Copyright (c) 2025 Adam Rushford -->
+
 Each package folder contains a manifest and, later, reviewed source or adapter
 code. A manifest is allowed to exist before source import when it records
 provenance, security constraints, and the intended EpochEngine API boundary.
