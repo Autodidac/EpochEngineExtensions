@@ -1,8 +1,8 @@
 {
   "id": "research_voxel_planetoid_vulkan",
   "displayName": "Research Voxel Planetoid Vulkan",
-  "manifestLicense": "MIT",
-  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
+  "manifestLicense": "LicenseRef-MIT-NoSell",
+  "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
   "status": "provenance-only",
   "kind": "research-prototype",
   "activation": "manual-research-import",
@@ -22,6 +22,17 @@
     "epochPackageId": "research_voxel_planetoid_vulkan",
     "expectedCacheRoot": "cache/packages/research_voxel_planetoid_vulkan",
     "notes": "Use as reference for voxel LOD, chunk streaming, and Vulkan renderer ideas after API-boundary review."
+  },
+  "script": {
+    "language": "C++23",
+    "path": "scripts/research_voxel_planetoid_vulkan_package.ascript.cpp",
+    "api": "epoch_package_script_api",
+    "mode": "local-archive-stage-build-live-preview",
+    "downloadsSource": false,
+    "compilesSource": true,
+    "livePreview": true,
+    "humanGated": true,
+    "autoRunAllowed": false
   },
   "build": {
     "humanGated": true,

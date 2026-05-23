@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Adam Rushford
+# SPDX-License-Identifier: LicenseRef-MIT-NoSell
+# Copyright (c) 2026 Adam Rushford
 
 $ErrorActionPreference = "Stop"
 

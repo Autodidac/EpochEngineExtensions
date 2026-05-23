@@ -1,8 +1,8 @@
 {
   "id": "research_forest_lsystem_wicked_2ol",
   "displayName": "Research Forest L-System Wicked 2OL",
-  "manifestLicense": "MIT",
-  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
+  "manifestLicense": "LicenseRef-MIT-NoSell",
+  "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
   "status": "provenance-only",
   "kind": "research-prototype",
   "activation": "manual-research-import",
@@ -24,6 +24,17 @@
     "epochPackageId": "research_forest_lsystem_wicked_2ol",
     "expectedCacheRoot": "cache/packages/research_forest_lsystem_wicked_2ol",
     "notes": "Forest Factory is core in EpochEngine; this package is optional research/reference material."
+  },
+  "script": {
+    "language": "C++23",
+    "path": "scripts/research_forest_lsystem_reference_package.ascript.cpp",
+    "api": "epoch_package_script_api",
+    "mode": "download-stage-reference",
+    "downloadsSource": true,
+    "compilesSource": false,
+    "livePreview": false,
+    "humanGated": true,
+    "autoRunAllowed": false
   },
   "build": {
     "humanGated": true,

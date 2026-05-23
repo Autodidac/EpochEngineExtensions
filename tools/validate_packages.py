@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Adam Rushford
+# SPDX-License-Identifier: LicenseRef-MIT-NoSell
+# Copyright (c) 2026 Adam Rushford
 
 from __future__ import annotations
 
@@ -28,6 +28,10 @@ SECURITY_REQUIRED = {
     "requiresExplicitNetworkApproval",
     "autoRunAllowed",
     "includeByDefault",
+}
+SCRIPTED_SOURCE_KINDS = {
+    "downloadable-source",
+    "research-prototype",
 }
 
 
@@ -69,17 +73,43 @@ def validate_manifest(path: pathlib.Path) -> list[str]:
     if package_id and path.parent.name != package_id:
         errors.append(f"{path}: folder name must match id '{package_id}'")
 
-    if manifest.get("manifestLicense") != "MIT":
-        errors.append(f"{path}: manifestLicense must be MIT")
+    if manifest.get("manifestLicense") != "LicenseRef-MIT-NoSell":
+        errors.append(f"{path}: manifestLicense must be LicenseRef-MIT-NoSell")
 
-    if "Adam Rushford" not in str(manifest.get("manifestCopyright", "")):
-        errors.append(f"{path}: manifestCopyright must name Adam Rushford")
+    copyright_notice = str(manifest.get("manifestCopyright", ""))
+    if "2026 Adam Rushford" not in copyright_notice:
+        errors.append(f"{path}: manifestCopyright must match the EpochEngine copyright year and owner")
 
     boundary = manifest.get("engineBoundary")
     if isinstance(boundary, dict):
         cache_root = boundary.get("expectedCacheRoot", "")
         if package_id and cache_root != f"cache/packages/{package_id}":
             errors.append(f"{path}: expectedCacheRoot should be cache/packages/{package_id}")
+
+    script = manifest.get("script")
+    if manifest.get("kind") in SCRIPTED_SOURCE_KINDS:
+        if not isinstance(script, dict):
+            errors.append(f"{path}: source/visual packages must declare a C++23 script object")
+        else:
+            script_path = str(script.get("path", ""))
+            if script.get("language") != "C++23":
+                errors.append(f"{path}: script.language must be C++23")
+            if script.get("api") != "epoch_package_script_api":
+                errors.append(f"{path}: script.api must be epoch_package_script_api")
+            if not script_path.endswith(".ascript.cpp"):
+                errors.append(f"{path}: script.path must point at a .ascript.cpp runner")
+            elif not (path.parent / script_path).is_file():
+                errors.append(f"{path}: script.path does not exist: {script_path}")
+            if script.get("humanGated") is not True:
+                errors.append(f"{path}: package scripts must be human-gated")
+            if script.get("autoRunAllowed") is True:
+                errors.append(f"{path}: package scripts must not auto-run")
+
+            if package_id != "research_forest_lsystem_wicked_2ol":
+                if script.get("compilesSource") is not True:
+                    errors.append(f"{path}: visual/source package script must compile source")
+                if script.get("livePreview") is not True:
+                    errors.append(f"{path}: visual/source package script must register a live preview")
 
     return errors
 

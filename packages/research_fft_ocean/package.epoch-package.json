@@ -1,8 +1,8 @@
 {
   "id": "research_fft_ocean",
   "displayName": "Research FFT Ocean",
-  "manifestLicense": "MIT",
-  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
+  "manifestLicense": "LicenseRef-MIT-NoSell",
+  "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
   "status": "planned",
   "kind": "downloadable-source",
   "activation": "downloaded-opt-in",
@@ -22,6 +22,17 @@
     "epochPackageId": "research_fft_ocean",
     "expectedCacheRoot": "cache/packages/research_fft_ocean",
     "notes": "Optional renderer/simulation feature, not a core dependency."
+  },
+  "script": {
+    "language": "C++23",
+    "path": "scripts/research_fft_ocean_package.ascript.cpp",
+    "api": "epoch_package_script_api",
+    "mode": "download-stage-build-live-preview",
+    "downloadsSource": true,
+    "compilesSource": true,
+    "livePreview": true,
+    "humanGated": true,
+    "autoRunAllowed": false
   },
   "build": {
     "humanGated": true,

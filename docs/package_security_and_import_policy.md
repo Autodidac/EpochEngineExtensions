@@ -1,7 +1,7 @@
 # Package Security And Import Policy
 
-<!-- SPDX-License-Identifier: MIT -->
-<!-- Copyright (c) 2025 Adam Rushford -->
+<!-- SPDX-License-Identifier: LicenseRef-MIT-NoSell -->
+<!-- Copyright (c) 2026 Adam Rushford -->
 
 EpochEngineExtensions exists to keep optional package source out of the minimal
 EpochEngine clone while still making those packages reviewable and repeatable.
@@ -28,6 +28,14 @@ EpochEngine clone while still making those packages reviewable and repeatable.
 - Prefer adapter layers over wholesale source-tree dumps.
 - Do not promote prototypes into EpochEngine core until the API boundary,
   build/test evidence, and package ownership are documented.
+- Visual packages are compiled package scripts first. Voxel terrain, planetary
+  terrain, FFT ocean, and demo previews should materialize under
+  `cache/packages/<package-id>/`, build from reviewed source, and register a
+  live editor preview through the Package Manager rather than shipping as JSON
+  only.
+- Forest Factory remains a core EpochEngine feature. Heavy forest datasets,
+  demos, or external L-system reference imports may live here, but activation
+  should still be project opt-in.
 
 ## Cache Layout
 

@@ -1,8 +1,8 @@
 {
   "id": "research_almond_voxel_authoring",
   "displayName": "Research Almond Voxel Authoring",
-  "manifestLicense": "MIT",
-  "manifestCopyright": "Copyright (c) 2025 Adam Rushford",
+  "manifestLicense": "LicenseRef-MIT-NoSell",
+  "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
   "status": "provenance-only",
   "kind": "research-prototype",
   "activation": "manual-research-import",
@@ -24,6 +24,17 @@
     "epochPackageId": "research_almond_voxel_authoring",
     "expectedCacheRoot": "cache/packages/research_almond_voxel_authoring",
     "notes": "Review for voxel authoring concepts that map onto EpochEngine voxel.field and voxel.trace contracts."
+  },
+  "script": {
+    "language": "C++23",
+    "path": "scripts/research_almond_voxel_authoring_package.ascript.cpp",
+    "api": "epoch_package_script_api",
+    "mode": "download-stage-build-live-preview",
+    "downloadsSource": true,
+    "compilesSource": true,
+    "livePreview": true,
+    "humanGated": true,
+    "autoRunAllowed": false
   },
   "build": {
     "humanGated": true,
