@@ -21,5 +21,11 @@ Required first-pass rules:
 - Build/run commands are human-gated and must produce visible evidence.
 - Unreviewed source extensions remain `status: "planned"` until the package has
   reviewed source, a compiling adapter, and visible Package Manager evidence.
-- `fft_ocean` is the first source-staged package: it includes real C++23 ocean
-  simulation source and a self-test target instead of only a manifest.
+- Current source-staged packages include real C++23 code and self-test targets
+  instead of only manifests: `fft_ocean`, `voxel_authoring_tools`,
+  `voxel_planetoid_lod`, `planetary_terrain`, `forest_lsystem_extension`,
+  `engine_network_runtime`, `engine_client_listen_server`, and
+  `engine_authoritative_dedicated_server`.
+- Network/server packages are contract/planning packages only. They must not
+  bind ports, create listeners, auto-run services, or expose a model-accessible
+  control surface from package install.

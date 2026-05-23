@@ -10,20 +10,23 @@ namespace
     using epoch::packages::script::PackageScriptPlan;
 
     constexpr Operation kOperations[] = {
-        { OperationKind::HumanApprovalGate, "Confirm forest reference import", "Forest Factory is core; this package is reference material only until license/dependency review completes.", true },
-        { OperationKind::FetchGitSource, "Fetch reference source", "Fetch the external L-system reference into cache/packages/forest_lsystem_extension/source/ only after approval.", true },
-        { OperationKind::RegisterReferenceMaterial, "Register reference material", "Expose the source as reviewed reference material for the native Forest Factory path.", true }
+        { OperationKind::HumanApprovalGate, "Confirm Forest Factory extension", "Forest Factory is a core Epoch direction; this package stages optional L-system source and must stay opt-in.", true },
+        { OperationKind::FetchGitSource, "Fetch package source", "Fetch the reviewed extension source into cache/packages/forest_lsystem_extension/source/.", true },
+        { OperationKind::StageCachePackage, "Stage forest adapter", "Stage deterministic grammar and branch segment code for renderer-neutral preview evidence.", true },
+        { OperationKind::ConfigureBuild, "Configure forest preview", "Configure the C++23 Forest Factory extension self-test target.", true },
+        { OperationKind::CompileAdapter, "Compile forest preview", "Build the staged forest extension before any editor preview is exposed.", true },
+        { OperationKind::RegisterLivePreview, "Register forest preview", "Expose the forest preview only after build evidence exists.", true }
     };
 
     constexpr PackageScriptPlan kPlan{
         "forest_lsystem_extension",
         "1",
         "cache/packages/forest_lsystem_extension",
-        "https://github.com/Autodidac/WickedTwoOLSystem",
-        "482b84768447247b076fd4322cba82b285b32698",
+        "https://github.com/Autodidac/EpochEngineExtensions",
+        "packages/forest_lsystem_extension",
         true,
-        false,
-        false,
+        true,
+        true,
         false,
         kOperations,
         sizeof(kOperations) / sizeof(kOperations[0])

@@ -28,17 +28,24 @@ software project, single-player game, or minimal generated engine clone.
   networking model for games, and it must not be injected into unrelated
   software or single-player projects.
 
-## Initial Code Extension Tracks
+## Source-Staged Code Extension Tracks
 
-- `engine_network_runtime`: inert shared network/session contracts.
+- `engine_network_runtime`: inert shared network/session contracts and packet
+  frame/policy self-tests.
 - `engine_authoritative_dedicated_server`: optional headless authoritative
-  server package for projects that deliberately choose that path.
-- `engine_client_listen_server`: client-hosted listen/nondedicated server path.
-- `voxel_planetoid_lod`: renderer-neutral voxel planetoid LOD extension.
-- `voxel_authoring_tools`: voxel authoring/code extension package.
-- `forest_lsystem_extension`: optional Forest Factory reference extension.
-- `planetary_terrain`: planetary and multi-terrain extension package.
-- `fft_ocean`: FFT ocean simulation extension package.
+  server planning package for projects that deliberately choose that path.
+- `engine_client_listen_server`: client-hosted listen/nondedicated server
+  planning path.
+- `voxel_planetoid_lod`: renderer-neutral voxel planetoid field and chunk LOD
+  package.
+- `voxel_authoring_tools`: sparse voxel authoring and brush replay package.
+- `forest_lsystem_extension`: optional Forest Factory L-system package.
+- `planetary_terrain`: planetary biome/tile composition package.
+- `fft_ocean`: FFT ocean simulation package.
+
+Each source-staged package has a package-local `CMakeLists.txt`, public C++23
+header, source file, and self-test target. Package code is intentionally
+renderer-neutral unless the package name says otherwise.
 
 ## Validate
 

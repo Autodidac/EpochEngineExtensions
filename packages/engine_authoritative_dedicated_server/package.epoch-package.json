@@ -3,7 +3,7 @@
   "displayName": "Optional Authoritative Dedicated Server",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "planned",
+  "status": "source-staged",
   "kind": "headless-server",
   "activation": "headless-server-opt-in",
   "summary": "Optional authoritative headless server package for multiplayer projects that deliberately choose that model.",
@@ -16,20 +16,45 @@
   "source": {
     "repo": "https://github.com/Autodidac/EpochEngineExtensions",
     "path": "packages/engine_authoritative_dedicated_server",
-    "provenance": "descriptor-only; local addons source not present in this checkout"
+    "provenance": "human-gated C++23 dedicated-server planning source staged in this package"
   },
   "engineBoundary": {
     "epochPackageId": "engine_authoritative_dedicated_server",
     "expectedCacheRoot": "cache/packages/engine_authoritative_dedicated_server",
     "notes": "Dedicated authoritative mode is not the default networking model and should not be added to non-networked projects."
   },
+  "script": {
+    "language": "C++23",
+    "path": "scripts/engine_authoritative_dedicated_server_package.ascript.cpp",
+    "api": "epoch_package_script_api",
+    "mode": "download-stage-build-headless-manual-run-plan",
+    "downloadsSource": true,
+    "compilesSource": true,
+    "livePreview": false,
+    "humanGated": true,
+    "autoRunAllowed": false
+  },
   "build": {
     "humanGated": true,
     "headlessCapable": true,
-    "commands": []
+    "sourceFiles": [
+      "CMakeLists.txt",
+      "include/epoch/extensions/engine_authoritative_dedicated_server/engine_authoritative_dedicated_server.hpp",
+      "src/engine_authoritative_dedicated_server.cpp",
+      "tests/engine_authoritative_dedicated_server_self_test.cpp"
+    ],
+    "targets": [
+      "epoch_extension_engine_authoritative_dedicated_server",
+      "epoch_extension_engine_authoritative_dedicated_server_self_test"
+    ],
+    "commands": [
+      "cmake -S packages/engine_authoritative_dedicated_server -B cache/packages/engine_authoritative_dedicated_server/build",
+      "cmake --build cache/packages/engine_authoritative_dedicated_server/build --target epoch_extension_engine_authoritative_dedicated_server_self_test",
+      "cache/packages/engine_authoritative_dedicated_server/build/epoch_extension_engine_authoritative_dedicated_server_self_test"
+    ]
   },
   "notes": [
-    "Import addon server source only after provenance, license, API boundary, and manual build/run gates are reviewed.",
-    "Do not auto-bind ports or launch a listener from package install."
+    "Do not auto-bind ports or launch a listener from package install.",
+    "The staged code plans approved headless authority and snapshot payloads only; a future adapter must own actual transport."
   ]
 }

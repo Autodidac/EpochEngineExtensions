@@ -3,7 +3,7 @@
   "displayName": "Voxel Authoring Tools",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "planned",
+  "status": "source-staged",
   "kind": "code-extension",
   "activation": "package-manager-opt-in",
   "summary": "Voxel authoring/toolkit code extension staged for API-boundary review.",
@@ -16,7 +16,7 @@
   "source": {
     "repo": "https://github.com/Autodidac/EpochEngineExtensions",
     "path": "packages/voxel_authoring_tools",
-    "provenance": "planned source extension"
+    "provenance": "renderer-neutral C++23 sparse voxel authoring source staged in this package"
   },
   "engineBoundary": {
     "epochPackageId": "voxel_authoring_tools",
@@ -36,9 +36,23 @@
   },
   "build": {
     "humanGated": true,
-    "commands": []
+    "sourceFiles": [
+      "CMakeLists.txt",
+      "include/epoch/extensions/voxel_authoring_tools/voxel_authoring_tools.hpp",
+      "src/voxel_authoring_tools.cpp",
+      "tests/voxel_authoring_tools_self_test.cpp"
+    ],
+    "targets": [
+      "epoch_extension_voxel_authoring_tools",
+      "epoch_extension_voxel_authoring_tools_self_test"
+    ],
+    "commands": [
+      "cmake -S packages/voxel_authoring_tools -B cache/packages/voxel_authoring_tools/build",
+      "cmake --build cache/packages/voxel_authoring_tools/build --target epoch_extension_voxel_authoring_tools_self_test",
+      "cache/packages/voxel_authoring_tools/build/epoch_extension_voxel_authoring_tools_self_test"
+    ]
   },
   "notes": [
-    "Promote only small, reviewed concepts or adapters into EpochEngine core contracts."
+    "Stages sparse density editing, sphere brush replay, material stamping, and deterministic editor evidence without renderer handles."
   ]
 }

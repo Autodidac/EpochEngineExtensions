@@ -3,7 +3,7 @@
   "displayName": "Forest L-System Extension",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "planned",
+  "status": "source-staged",
   "kind": "code-extension",
   "activation": "package-manager-opt-in",
   "summary": "Optional Forest Factory reference/code extension for reviewed L-system material.",
@@ -14,10 +14,10 @@
     "includeByDefault": false
   },
   "source": {
-    "repo": "https://github.com/Autodidac/WickedTwoOLSystem",
-    "commit": "482b84768447247b076fd4322cba82b285b32698",
-    "license": "UNKNOWN",
-    "provenance": "git commit recorded; source not imported because license/status needs review"
+    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "path": "packages/forest_lsystem_extension",
+    "upstreamReference": "https://github.com/Autodidac/WickedTwoOLSystem@482b84768447247b076fd4322cba82b285b32698",
+    "provenance": "renderer-neutral C++23 Forest Factory L-system source staged in this package"
   },
   "engineBoundary": {
     "epochPackageId": "forest_lsystem_extension",
@@ -28,18 +28,32 @@
     "language": "C++23",
     "path": "scripts/forest_lsystem_extension_package.ascript.cpp",
     "api": "epoch_package_script_api",
-    "mode": "download-stage-reference",
+    "mode": "download-stage-build-live-preview",
     "downloadsSource": true,
-    "compilesSource": false,
-    "livePreview": false,
+    "compilesSource": true,
+    "livePreview": true,
     "humanGated": true,
     "autoRunAllowed": false
   },
   "build": {
     "humanGated": true,
-    "commands": []
+    "sourceFiles": [
+      "CMakeLists.txt",
+      "include/epoch/extensions/forest_lsystem_extension/forest_lsystem.hpp",
+      "src/forest_lsystem.cpp",
+      "tests/forest_lsystem_self_test.cpp"
+    ],
+    "targets": [
+      "epoch_extension_forest_lsystem",
+      "epoch_extension_forest_lsystem_self_test"
+    ],
+    "commands": [
+      "cmake -S packages/forest_lsystem_extension -B cache/packages/forest_lsystem_extension/build",
+      "cmake --build cache/packages/forest_lsystem_extension/build --target epoch_extension_forest_lsystem_self_test",
+      "cache/packages/forest_lsystem_extension/build/epoch_extension_forest_lsystem_self_test"
+    ]
   },
   "notes": [
-    "Resolve license and dependency status before source import."
+    "Stages deterministic grammar expansion and branch segment generation for future Forest Factory, voxel occupancy, and renderer adapter outputs."
   ]
 }

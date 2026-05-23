@@ -3,7 +3,7 @@
   "displayName": "Planetary Terrain Extension",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "planned",
+  "status": "source-staged",
   "kind": "code-extension",
   "activation": "package-manager-opt-in",
   "summary": "NMS-like planetary terrain and multi-terrain stacks kept outside minimal EpochEngine clones.",
@@ -16,7 +16,7 @@
   "source": {
     "repo": "https://github.com/Autodidac/EpochEngineExtensions",
     "path": "packages/planetary_terrain",
-    "provenance": "planned source extension"
+    "provenance": "renderer-neutral C++23 planetary terrain composition source staged in this package"
   },
   "engineBoundary": {
     "epochPackageId": "planetary_terrain",
@@ -36,9 +36,23 @@
   },
   "build": {
     "humanGated": true,
-    "commands": []
+    "sourceFiles": [
+      "CMakeLists.txt",
+      "include/epoch/extensions/planetary_terrain/planetary_terrain.hpp",
+      "src/planetary_terrain.cpp",
+      "tests/planetary_terrain_self_test.cpp"
+    ],
+    "targets": [
+      "epoch_extension_planetary_terrain",
+      "epoch_extension_planetary_terrain_self_test"
+    ],
+    "commands": [
+      "cmake -S packages/planetary_terrain -B cache/packages/planetary_terrain/build",
+      "cmake --build cache/packages/planetary_terrain/build --target epoch_extension_planetary_terrain_self_test",
+      "cache/packages/planetary_terrain/build/epoch_extension_planetary_terrain_self_test"
+    ]
   },
   "notes": [
-    "Package may later include planetary terrain, biome stacks, streaming, and editor tools."
+    "Stages terrain samples, biome classification, and tile neighborhood planning above core voxel/trace contracts."
   ]
 }
