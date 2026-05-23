@@ -1,0 +1,31 @@
+{
+  "id": "research_planetary_terrain",
+  "displayName": "Research Planetary Terrain",
+  "status": "planned",
+  "kind": "downloadable-source",
+  "activation": "downloaded-opt-in",
+  "summary": "NMS-like planetary terrain and multi-terrain stacks kept outside minimal EpochEngine clones.",
+  "security": {
+    "serverOrListenerAllowed": false,
+    "requiresExplicitNetworkApproval": false,
+    "autoRunAllowed": false,
+    "includeByDefault": false
+  },
+  "source": {
+    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "path": "packages/research_planetary_terrain",
+    "provenance": "planned package"
+  },
+  "engineBoundary": {
+    "epochPackageId": "research_planetary_terrain",
+    "expectedCacheRoot": "cache/packages/research_planetary_terrain",
+    "notes": "Use core voxel field/pathing/tracing contracts, but keep heavy generation and authoring code package-gated."
+  },
+  "build": {
+    "humanGated": true,
+    "commands": []
+  },
+  "notes": [
+    "Package may later include planetary terrain, biome stacks, streaming, and editor tools."
+  ]
+}

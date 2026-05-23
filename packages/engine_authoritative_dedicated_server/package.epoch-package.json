@@ -1,0 +1,33 @@
+{
+  "id": "engine_authoritative_dedicated_server",
+  "displayName": "Optional Authoritative Dedicated Server",
+  "status": "planned",
+  "kind": "headless-server",
+  "activation": "headless-server-opt-in",
+  "summary": "Optional authoritative headless server package for multiplayer projects that deliberately choose that model.",
+  "security": {
+    "serverOrListenerAllowed": true,
+    "requiresExplicitNetworkApproval": true,
+    "autoRunAllowed": false,
+    "includeByDefault": false
+  },
+  "source": {
+    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "path": "packages/engine_authoritative_dedicated_server",
+    "provenance": "descriptor-only; local addons source not present in this checkout"
+  },
+  "engineBoundary": {
+    "epochPackageId": "engine_authoritative_dedicated_server",
+    "expectedCacheRoot": "cache/packages/engine_authoritative_dedicated_server",
+    "notes": "Dedicated authoritative mode is not the default networking model and should not be added to non-networked projects."
+  },
+  "build": {
+    "humanGated": true,
+    "headlessCapable": true,
+    "commands": []
+  },
+  "notes": [
+    "Import addon server source only after provenance, license, API boundary, and manual build/run gates are reviewed.",
+    "Do not auto-bind ports or launch a listener from package install."
+  ]
+}

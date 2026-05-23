@@ -1,0 +1,33 @@
+{
+  "id": "research_forest_lsystem_wicked_2ol",
+  "displayName": "Research Forest L-System Wicked 2OL",
+  "status": "provenance-only",
+  "kind": "research-prototype",
+  "activation": "manual-research-import",
+  "summary": "Forest/L-system lab staged as reference material for the core Forest Factory direction.",
+  "security": {
+    "serverOrListenerAllowed": false,
+    "requiresExplicitNetworkApproval": false,
+    "autoRunAllowed": false,
+    "includeByDefault": false
+  },
+  "source": {
+    "repo": "https://github.com/Autodidac/WickedTwoOLSystem",
+    "commit": "482b84768447247b076fd4322cba82b285b32698",
+    "license": "UNKNOWN",
+    "localPath": "C:/Users/iammi/source/repos/WickedTwoOLSystem",
+    "provenance": "git commit recorded; source not imported because license/status needs review"
+  },
+  "engineBoundary": {
+    "epochPackageId": "research_forest_lsystem_wicked_2ol",
+    "expectedCacheRoot": "cache/packages/research_forest_lsystem_wicked_2ol",
+    "notes": "Forest Factory is core in EpochEngine; this package is optional research/reference material."
+  },
+  "build": {
+    "humanGated": true,
+    "commands": []
+  },
+  "notes": [
+    "Resolve license and dependency status before source import."
+  ]
+}

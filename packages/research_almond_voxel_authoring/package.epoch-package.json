@@ -1,0 +1,33 @@
+{
+  "id": "research_almond_voxel_authoring",
+  "displayName": "Research Almond Voxel Authoring",
+  "status": "provenance-only",
+  "kind": "research-prototype",
+  "activation": "manual-research-import",
+  "summary": "AlmondVoxel authoring/toolkit prototype staged for API-boundary review.",
+  "security": {
+    "serverOrListenerAllowed": false,
+    "requiresExplicitNetworkApproval": false,
+    "autoRunAllowed": false,
+    "includeByDefault": false
+  },
+  "source": {
+    "repo": "https://github.com/Autodidac/AlmondVoxel.git",
+    "commit": "fc84eb43eebed07cb95791920e9f2f6ba3734b81",
+    "license": "MIT",
+    "localPath": "C:/Users/iammi/source/repos/AlmondVoxel",
+    "provenance": "git commit recorded; source not imported in this pass"
+  },
+  "engineBoundary": {
+    "epochPackageId": "research_almond_voxel_authoring",
+    "expectedCacheRoot": "cache/packages/research_almond_voxel_authoring",
+    "notes": "Review for voxel authoring concepts that map onto EpochEngine voxel.field and voxel.trace contracts."
+  },
+  "build": {
+    "humanGated": true,
+    "commands": []
+  },
+  "notes": [
+    "Promote only small, reviewed concepts or adapters into EpochEngine core contracts."
+  ]
+}

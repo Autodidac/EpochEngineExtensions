@@ -1,0 +1,31 @@
+{
+  "id": "engine_client_listen_server",
+  "displayName": "Client Listen Server",
+  "status": "planned",
+  "kind": "network-runtime",
+  "activation": "client-listen-server-opt-in",
+  "summary": "Client-hosted nondedicated or competitive-friendly session option for multiplayer projects that explicitly opt in.",
+  "security": {
+    "serverOrListenerAllowed": true,
+    "requiresExplicitNetworkApproval": true,
+    "autoRunAllowed": false,
+    "includeByDefault": false
+  },
+  "source": {
+    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "path": "packages/engine_client_listen_server",
+    "provenance": "descriptor-only"
+  },
+  "engineBoundary": {
+    "epochPackageId": "engine_client_listen_server",
+    "expectedCacheRoot": "cache/packages/engine_client_listen_server",
+    "notes": "Separate from optional authoritative dedicated headless server mode."
+  },
+  "build": {
+    "humanGated": true,
+    "commands": []
+  },
+  "notes": [
+    "Future competitive paths should add client prediction, rollback/rewind, and verifier evidence without making authoritative dedicated the default."
+  ]
+}

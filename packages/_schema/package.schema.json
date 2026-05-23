@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Epoch Extension Package Manifest",
+  "type": "object",
+  "required": [
+    "id",
+    "displayName",
+    "status",
+    "kind",
+    "activation",
+    "security",
+    "source",
+    "engineBoundary"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "displayName": { "type": "string" },
+    "status": { "type": "string" },
+    "kind": { "type": "string" },
+    "activation": { "type": "string" },
+    "summary": { "type": "string" },
+    "security": {
+      "type": "object",
+      "required": [
+        "serverOrListenerAllowed",
+        "requiresExplicitNetworkApproval",
+        "autoRunAllowed",
+        "includeByDefault"
+      ],
+      "properties": {
+        "serverOrListenerAllowed": { "type": "boolean" },
+        "requiresExplicitNetworkApproval": { "type": "boolean" },
+        "autoRunAllowed": { "type": "boolean" },
+        "includeByDefault": { "type": "boolean" }
+      }
+    },
+    "source": { "type": "object" },
+    "engineBoundary": { "type": "object" },
+    "build": { "type": "object" },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

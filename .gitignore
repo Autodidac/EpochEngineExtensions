@@ -33,3 +33,9 @@
 
 x64/*
 .vs/*
+build/
+cache/
+Bin/
+bin/
+__pycache__/
+*.pyc

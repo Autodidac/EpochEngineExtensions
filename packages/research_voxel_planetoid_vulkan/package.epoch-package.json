@@ -1,0 +1,31 @@
+{
+  "id": "research_voxel_planetoid_vulkan",
+  "displayName": "Research Voxel Planetoid Vulkan",
+  "status": "provenance-only",
+  "kind": "research-prototype",
+  "activation": "manual-research-import",
+  "summary": "Local Vulkan voxel/chunk prototype snapshot staged for reviewed package import.",
+  "security": {
+    "serverOrListenerAllowed": false,
+    "requiresExplicitNetworkApproval": false,
+    "autoRunAllowed": false,
+    "includeByDefault": false
+  },
+  "source": {
+    "localPath": "C:/Users/iammi/source/cursorAIsource/vk_cp_cursor_nodoublefree.zip",
+    "sha256": "BCACE57C2ED881C0AE0D5B4B48F8757E80BE08135031CA29EAA3DE2CFE9B69F1",
+    "provenance": "local zip hash only; source not imported in this pass"
+  },
+  "engineBoundary": {
+    "epochPackageId": "research_voxel_planetoid_vulkan",
+    "expectedCacheRoot": "cache/packages/research_voxel_planetoid_vulkan",
+    "notes": "Use as reference for voxel LOD, chunk streaming, and Vulkan renderer ideas after API-boundary review."
+  },
+  "build": {
+    "humanGated": true,
+    "commands": []
+  },
+  "notes": [
+    "Do not import wholesale until source layout, license, dependencies, and renderer boundary are reviewed."
+  ]
+}

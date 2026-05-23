@@ -1,0 +1,31 @@
+{
+  "id": "research_fft_ocean",
+  "displayName": "Research FFT Ocean",
+  "status": "planned",
+  "kind": "downloadable-source",
+  "activation": "downloaded-opt-in",
+  "summary": "FFT ocean simulation package candidate, excluded from minimal EpochEngine clones.",
+  "security": {
+    "serverOrListenerAllowed": false,
+    "requiresExplicitNetworkApproval": false,
+    "autoRunAllowed": false,
+    "includeByDefault": false
+  },
+  "source": {
+    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "path": "packages/research_fft_ocean",
+    "provenance": "planned package"
+  },
+  "engineBoundary": {
+    "epochPackageId": "research_fft_ocean",
+    "expectedCacheRoot": "cache/packages/research_fft_ocean",
+    "notes": "Optional renderer/simulation feature, not a core dependency."
+  },
+  "build": {
+    "humanGated": true,
+    "commands": []
+  },
+  "notes": [
+    "Keep separate from Forest Factory and core voxel/path tracing contracts."
+  ]
+}

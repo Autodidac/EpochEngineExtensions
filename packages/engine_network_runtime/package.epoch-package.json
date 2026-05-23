@@ -1,0 +1,31 @@
+{
+  "id": "engine_network_runtime",
+  "displayName": "Engine Network Runtime",
+  "status": "planned",
+  "kind": "network-runtime",
+  "activation": "project-opt-in",
+  "summary": "Shared client/session replication contracts that remain inert until a network package is explicitly enabled.",
+  "security": {
+    "serverOrListenerAllowed": false,
+    "requiresExplicitNetworkApproval": false,
+    "autoRunAllowed": false,
+    "includeByDefault": false
+  },
+  "source": {
+    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "path": "packages/engine_network_runtime",
+    "provenance": "descriptor-only"
+  },
+  "engineBoundary": {
+    "epochPackageId": "engine_network_runtime",
+    "expectedCacheRoot": "cache/packages/engine_network_runtime",
+    "notes": "Keep shared contracts inert so software and single-player projects do not inherit server bloat."
+  },
+  "build": {
+    "humanGated": true,
+    "commands": []
+  },
+  "notes": [
+    "This package is the dependency layer for future listen-server or dedicated-server packages."
+  ]
+}
