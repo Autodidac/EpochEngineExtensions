@@ -1,12 +1,12 @@
 {
-  "id": "research_forest_lsystem_wicked_2ol",
-  "displayName": "Research Forest L-System Wicked 2OL",
+  "id": "forest_lsystem_extension",
+  "displayName": "Forest L-System Extension",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "provenance-only",
-  "kind": "research-prototype",
-  "activation": "manual-research-import",
-  "summary": "Forest/L-system lab staged as reference material for the core Forest Factory direction.",
+  "status": "planned",
+  "kind": "code-extension",
+  "activation": "package-manager-opt-in",
+  "summary": "Optional Forest Factory reference/code extension for reviewed L-system material.",
   "security": {
     "serverOrListenerAllowed": false,
     "requiresExplicitNetworkApproval": false,
@@ -17,17 +17,16 @@
     "repo": "https://github.com/Autodidac/WickedTwoOLSystem",
     "commit": "482b84768447247b076fd4322cba82b285b32698",
     "license": "UNKNOWN",
-    "localPath": "C:/Users/iammi/source/repos/WickedTwoOLSystem",
     "provenance": "git commit recorded; source not imported because license/status needs review"
   },
   "engineBoundary": {
-    "epochPackageId": "research_forest_lsystem_wicked_2ol",
-    "expectedCacheRoot": "cache/packages/research_forest_lsystem_wicked_2ol",
-    "notes": "Forest Factory is core in EpochEngine; this package is optional research/reference material."
+    "epochPackageId": "forest_lsystem_extension",
+    "expectedCacheRoot": "cache/packages/forest_lsystem_extension",
+    "notes": "Forest Factory is core in EpochEngine; this package is optional extension/reference material."
   },
   "script": {
     "language": "C++23",
-    "path": "scripts/research_forest_lsystem_reference_package.ascript.cpp",
+    "path": "scripts/forest_lsystem_extension_package.ascript.cpp",
     "api": "epoch_package_script_api",
     "mode": "download-stage-reference",
     "downloadsSource": true,

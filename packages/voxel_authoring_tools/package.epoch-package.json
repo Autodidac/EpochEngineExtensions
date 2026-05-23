@@ -1,12 +1,12 @@
 {
-  "id": "research_almond_voxel_authoring",
-  "displayName": "Research Almond Voxel Authoring",
+  "id": "voxel_authoring_tools",
+  "displayName": "Voxel Authoring Tools",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "provenance-only",
-  "kind": "research-prototype",
-  "activation": "manual-research-import",
-  "summary": "AlmondVoxel authoring/toolkit prototype staged for API-boundary review.",
+  "status": "planned",
+  "kind": "code-extension",
+  "activation": "package-manager-opt-in",
+  "summary": "Voxel authoring/toolkit code extension staged for API-boundary review.",
   "security": {
     "serverOrListenerAllowed": false,
     "requiresExplicitNetworkApproval": false,
@@ -14,20 +14,18 @@
     "includeByDefault": false
   },
   "source": {
-    "repo": "https://github.com/Autodidac/AlmondVoxel.git",
-    "commit": "fc84eb43eebed07cb95791920e9f2f6ba3734b81",
-    "license": "MIT",
-    "localPath": "C:/Users/iammi/source/repos/AlmondVoxel",
-    "provenance": "git commit recorded; source not imported in this pass"
+    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "path": "packages/voxel_authoring_tools",
+    "provenance": "planned source extension"
   },
   "engineBoundary": {
-    "epochPackageId": "research_almond_voxel_authoring",
-    "expectedCacheRoot": "cache/packages/research_almond_voxel_authoring",
+    "epochPackageId": "voxel_authoring_tools",
+    "expectedCacheRoot": "cache/packages/voxel_authoring_tools",
     "notes": "Review for voxel authoring concepts that map onto EpochEngine voxel.field and voxel.trace contracts."
   },
   "script": {
     "language": "C++23",
-    "path": "scripts/research_almond_voxel_authoring_package.ascript.cpp",
+    "path": "scripts/voxel_authoring_tools_package.ascript.cpp",
     "api": "epoch_package_script_api",
     "mode": "download-stage-build-live-preview",
     "downloadsSource": true,

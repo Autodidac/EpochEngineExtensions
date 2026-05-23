@@ -10,8 +10,8 @@ namespace
     using epoch::packages::script::PackageScriptPlan;
 
     constexpr Operation kOperations[] = {
-        { OperationKind::HumanApprovalGate, "Confirm AlmondVoxel import", "Fetch only after the operator approves the package import and source license notice.", true },
-        { OperationKind::FetchGitSource, "Fetch source", "Clone Autodidac/AlmondVoxel at the recorded commit into cache/packages/research_almond_voxel_authoring/source/.", true },
+        { OperationKind::HumanApprovalGate, "Confirm voxel authoring import", "Fetch only after the operator approves the package import and source license notice.", true },
+        { OperationKind::FetchGitSource, "Fetch source", "Fetch reviewed voxel authoring source into cache/packages/voxel_authoring_tools/source/.", true },
         { OperationKind::StageCachePackage, "Stage authoring adapter", "Stage a minimal Epoch voxel-authoring adapter; do not copy the whole tree into core.", true },
         { OperationKind::ConfigureBuild, "Configure authoring preview", "Configure against Epoch voxel.field and voxel.trace boundaries.", true },
         { OperationKind::CompileAdapter, "Compile authoring preview", "Build the package adapter for editor-side voxel authoring proof.", true },
@@ -19,11 +19,11 @@ namespace
     };
 
     constexpr PackageScriptPlan kPlan{
-        "research_almond_voxel_authoring",
+        "voxel_authoring_tools",
         "1",
-        "cache/packages/research_almond_voxel_authoring",
-        "https://github.com/Autodidac/AlmondVoxel.git",
-        "fc84eb43eebed07cb95791920e9f2f6ba3734b81",
+        "cache/packages/voxel_authoring_tools",
+        "https://github.com/Autodidac/EpochEngineExtensions",
+        "packages/voxel_authoring_tools",
         true,
         true,
         true,

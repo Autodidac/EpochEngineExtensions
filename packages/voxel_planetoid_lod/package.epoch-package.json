@@ -1,12 +1,12 @@
 {
-  "id": "research_voxel_planetoid_vulkan",
-  "displayName": "Research Voxel Planetoid Vulkan",
+  "id": "voxel_planetoid_lod",
+  "displayName": "Voxel Planetoid LOD Extension",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "provenance-only",
-  "kind": "research-prototype",
-  "activation": "manual-research-import",
-  "summary": "Local Vulkan voxel/chunk prototype snapshot staged for reviewed package import.",
+  "status": "planned",
+  "kind": "code-extension",
+  "activation": "package-manager-opt-in",
+  "summary": "Renderer-neutral voxel/chunk planetoid LOD code extension staged for reviewed package import.",
   "security": {
     "serverOrListenerAllowed": false,
     "requiresExplicitNetworkApproval": false,
@@ -14,18 +14,18 @@
     "includeByDefault": false
   },
   "source": {
-    "localPath": "C:/Users/iammi/source/cursorAIsource/vk_cp_cursor_nodoublefree.zip",
+    "archiveHint": "operator-supplied voxel planetoid archive",
     "sha256": "BCACE57C2ED881C0AE0D5B4B48F8757E80BE08135031CA29EAA3DE2CFE9B69F1",
-    "provenance": "local zip hash only; source not imported in this pass"
+    "provenance": "local archive hash only; source not imported in this pass"
   },
   "engineBoundary": {
-    "epochPackageId": "research_voxel_planetoid_vulkan",
-    "expectedCacheRoot": "cache/packages/research_voxel_planetoid_vulkan",
-    "notes": "Use as reference for voxel LOD, chunk streaming, and Vulkan renderer ideas after API-boundary review."
+    "epochPackageId": "voxel_planetoid_lod",
+    "expectedCacheRoot": "cache/packages/voxel_planetoid_lod",
+    "notes": "Use as reference for voxel LOD and chunk streaming after API-boundary review."
   },
   "script": {
     "language": "C++23",
-    "path": "scripts/research_voxel_planetoid_vulkan_package.ascript.cpp",
+    "path": "scripts/voxel_planetoid_lod_package.ascript.cpp",
     "api": "epoch_package_script_api",
     "mode": "local-archive-stage-build-live-preview",
     "downloadsSource": false,

@@ -11,7 +11,7 @@ namespace
 
     constexpr Operation kOperations[] = {
         { OperationKind::HumanApprovalGate, "Confirm planetary terrain package", "Planetary terrain is optional and must not bloat minimal software projects.", true },
-        { OperationKind::FetchGitSource, "Fetch package source", "Fetch the reviewed package source into cache/packages/research_planetary_terrain/source/.", true },
+        { OperationKind::FetchGitSource, "Fetch package source", "Fetch the reviewed package source into cache/packages/planetary_terrain/source/.", true },
         { OperationKind::StageCachePackage, "Stage terrain adapter", "Stage multi-terrain and planet LOD adapters against Epoch core voxel/tracing contracts.", true },
         { OperationKind::ConfigureBuild, "Configure terrain preview", "Configure a live editor preview target without promoting heavy source into core.", true },
         { OperationKind::CompileAdapter, "Compile terrain preview", "Build the terrain adapter through the Package Manager gate.", true },
@@ -19,11 +19,11 @@ namespace
     };
 
     constexpr PackageScriptPlan kPlan{
-        "research_planetary_terrain",
+        "planetary_terrain",
         "1",
-        "cache/packages/research_planetary_terrain",
+        "cache/packages/planetary_terrain",
         "https://github.com/Autodidac/EpochEngineExtensions",
-        "packages/research_planetary_terrain",
+        "packages/planetary_terrain",
         true,
         true,
         true,

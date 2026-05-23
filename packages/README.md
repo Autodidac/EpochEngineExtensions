@@ -19,5 +19,5 @@ Required first-pass rules:
   `true`.
 - Package source is not copied into generated Epoch projects by default.
 - Build/run commands are human-gated and must produce visible evidence.
-- Unreviewed prototypes remain `status: "provenance-only"` or
-  `status: "planned"`.
+- Unreviewed source extensions remain `status: "planned"` until the package has
+  reviewed source, a compiling adapter, and visible Package Manager evidence.

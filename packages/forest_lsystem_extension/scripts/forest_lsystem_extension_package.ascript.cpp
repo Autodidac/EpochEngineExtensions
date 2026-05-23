@@ -11,14 +11,14 @@ namespace
 
     constexpr Operation kOperations[] = {
         { OperationKind::HumanApprovalGate, "Confirm forest reference import", "Forest Factory is core; this package is reference material only until license/dependency review completes.", true },
-        { OperationKind::FetchGitSource, "Fetch reference source", "Fetch the external L-system reference into cache/packages/research_forest_lsystem_wicked_2ol/source/ only after approval.", true },
+        { OperationKind::FetchGitSource, "Fetch reference source", "Fetch the external L-system reference into cache/packages/forest_lsystem_extension/source/ only after approval.", true },
         { OperationKind::RegisterReferenceMaterial, "Register reference material", "Expose the source as reviewed reference material for the native Forest Factory path.", true }
     };
 
     constexpr PackageScriptPlan kPlan{
-        "research_forest_lsystem_wicked_2ol",
+        "forest_lsystem_extension",
         "1",
-        "cache/packages/research_forest_lsystem_wicked_2ol",
+        "cache/packages/forest_lsystem_extension",
         "https://github.com/Autodidac/WickedTwoOLSystem",
         "482b84768447247b076fd4322cba82b285b32698",
         true,

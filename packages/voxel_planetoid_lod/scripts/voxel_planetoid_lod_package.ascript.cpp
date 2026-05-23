@@ -10,19 +10,19 @@ namespace
     using epoch::packages::script::PackageScriptPlan;
 
     constexpr Operation kOperations[] = {
-        { OperationKind::HumanApprovalGate, "Confirm local archive import", "Use the reviewed vk_cp_cursor_nodoublefree.zip provenance before materializing source.", true },
-        { OperationKind::VerifyLocalArchive, "Verify source archive", "Match the recorded SHA-256 before extracting into cache/packages/research_voxel_planetoid_vulkan/.", true },
+        { OperationKind::HumanApprovalGate, "Confirm local archive import", "Use the reviewed voxel planetoid archive provenance before materializing source.", true },
+        { OperationKind::VerifyLocalArchive, "Verify source archive", "Match the recorded SHA-256 before extracting into cache/packages/voxel_planetoid_lod/.", true },
         { OperationKind::ExtractLocalArchive, "Extract package source", "Extract into the package cache, never into EpochEngine mainline or a generated project by default.", true },
-        { OperationKind::ConfigureBuild, "Configure voxel preview adapter", "Configure only the smallest Vulkan voxel preview adapter needed for editor proof.", true },
+        { OperationKind::ConfigureBuild, "Configure voxel preview adapter", "Configure only the smallest renderer-neutral voxel preview adapter needed for editor proof.", true },
         { OperationKind::CompileAdapter, "Compile voxel preview", "Build the adapter as a package preview target through the engine Package Manager gate.", true },
         { OperationKind::RegisterLivePreview, "Register live voxel preview", "Expose the preview through the editor package surface after build evidence exists.", true }
     };
 
     constexpr PackageScriptPlan kPlan{
-        "research_voxel_planetoid_vulkan",
+        "voxel_planetoid_lod",
         "1",
-        "cache/packages/research_voxel_planetoid_vulkan",
-        "local:C:/Users/iammi/source/cursorAIsource/vk_cp_cursor_nodoublefree.zip",
+        "cache/packages/voxel_planetoid_lod",
+        "operator-supplied:voxel_planetoid_archive",
         "sha256:BCACE57C2ED881C0AE0D5B4B48F8757E80BE08135031CA29EAA3DE2CFE9B69F1",
         false,
         true,

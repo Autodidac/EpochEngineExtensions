@@ -30,8 +30,8 @@ SECURITY_REQUIRED = {
     "includeByDefault",
 }
 SCRIPTED_SOURCE_KINDS = {
+    "code-extension",
     "downloadable-source",
-    "research-prototype",
 }
 
 
@@ -105,7 +105,7 @@ def validate_manifest(path: pathlib.Path) -> list[str]:
             if script.get("autoRunAllowed") is True:
                 errors.append(f"{path}: package scripts must not auto-run")
 
-            if package_id != "research_forest_lsystem_wicked_2ol":
+            if package_id != "forest_lsystem_extension":
                 if script.get("compilesSource") is not True:
                     errors.append(f"{path}: visual/source package script must compile source")
                 if script.get("livePreview") is not True:

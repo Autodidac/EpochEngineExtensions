@@ -1,11 +1,11 @@
 {
-  "id": "research_planetary_terrain",
-  "displayName": "Research Planetary Terrain",
+  "id": "planetary_terrain",
+  "displayName": "Planetary Terrain Extension",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
   "status": "planned",
-  "kind": "downloadable-source",
-  "activation": "downloaded-opt-in",
+  "kind": "code-extension",
+  "activation": "package-manager-opt-in",
   "summary": "NMS-like planetary terrain and multi-terrain stacks kept outside minimal EpochEngine clones.",
   "security": {
     "serverOrListenerAllowed": false,
@@ -15,17 +15,17 @@
   },
   "source": {
     "repo": "https://github.com/Autodidac/EpochEngineExtensions",
-    "path": "packages/research_planetary_terrain",
-    "provenance": "planned package"
+    "path": "packages/planetary_terrain",
+    "provenance": "planned source extension"
   },
   "engineBoundary": {
-    "epochPackageId": "research_planetary_terrain",
-    "expectedCacheRoot": "cache/packages/research_planetary_terrain",
+    "epochPackageId": "planetary_terrain",
+    "expectedCacheRoot": "cache/packages/planetary_terrain",
     "notes": "Use core voxel field/pathing/tracing contracts, but keep heavy generation and authoring code package-gated."
   },
   "script": {
     "language": "C++23",
-    "path": "scripts/research_planetary_terrain_package.ascript.cpp",
+    "path": "scripts/planetary_terrain_package.ascript.cpp",
     "api": "epoch_package_script_api",
     "mode": "download-stage-build-live-preview",
     "downloadsSource": true,

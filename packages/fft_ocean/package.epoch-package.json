@@ -1,12 +1,12 @@
 {
-  "id": "research_fft_ocean",
-  "displayName": "Research FFT Ocean",
+  "id": "fft_ocean",
+  "displayName": "FFT Ocean Extension",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
   "status": "planned",
-  "kind": "downloadable-source",
-  "activation": "downloaded-opt-in",
-  "summary": "FFT ocean simulation package candidate, excluded from minimal EpochEngine clones.",
+  "kind": "code-extension",
+  "activation": "package-manager-opt-in",
+  "summary": "FFT ocean simulation code extension, excluded from minimal EpochEngine clones.",
   "security": {
     "serverOrListenerAllowed": false,
     "requiresExplicitNetworkApproval": false,
@@ -15,17 +15,17 @@
   },
   "source": {
     "repo": "https://github.com/Autodidac/EpochEngineExtensions",
-    "path": "packages/research_fft_ocean",
-    "provenance": "planned package"
+    "path": "packages/fft_ocean",
+    "provenance": "planned source extension"
   },
   "engineBoundary": {
-    "epochPackageId": "research_fft_ocean",
-    "expectedCacheRoot": "cache/packages/research_fft_ocean",
+    "epochPackageId": "fft_ocean",
+    "expectedCacheRoot": "cache/packages/fft_ocean",
     "notes": "Optional renderer/simulation feature, not a core dependency."
   },
   "script": {
     "language": "C++23",
-    "path": "scripts/research_fft_ocean_package.ascript.cpp",
+    "path": "scripts/fft_ocean_package.ascript.cpp",
     "api": "epoch_package_script_api",
     "mode": "download-stage-build-live-preview",
     "downloadsSource": true,

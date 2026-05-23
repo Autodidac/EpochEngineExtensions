@@ -28,17 +28,17 @@ software project, single-player game, or minimal generated engine clone.
   networking model for games, and it must not be injected into unrelated
   software or single-player projects.
 
-## Initial Package Tracks
+## Initial Code Extension Tracks
 
 - `engine_network_runtime`: inert shared network/session contracts.
 - `engine_authoritative_dedicated_server`: optional headless authoritative
-  server package for projects that deliberately choose that model.
+  server package for projects that deliberately choose that path.
 - `engine_client_listen_server`: client-hosted listen/nondedicated server path.
-- `research_voxel_planetoid_vulkan`: local voxel/Vulkan prototype provenance.
-- `research_almond_voxel_authoring`: AlmondVoxel provenance and import plan.
-- `research_forest_lsystem_wicked_2ol`: forest/L-system lab provenance.
-- `research_planetary_terrain`: planetary and multi-terrain package plan.
-- `research_fft_ocean`: FFT ocean package plan.
+- `voxel_planetoid_lod`: renderer-neutral voxel planetoid LOD extension.
+- `voxel_authoring_tools`: voxel authoring/code extension package.
+- `forest_lsystem_extension`: optional Forest Factory reference extension.
+- `planetary_terrain`: planetary and multi-terrain extension package.
+- `fft_ocean`: FFT ocean simulation extension package.
 
 ## Validate
 

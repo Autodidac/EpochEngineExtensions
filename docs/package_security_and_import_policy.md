@@ -16,7 +16,7 @@ EpochEngine clone while still making those packages reviewable and repeatable.
 - Package tests may run local non-network self-tests by default, but any
   listener or port bind requires an explicit human run action.
 - Authoritative dedicated server is optional and headless-capable. It is not the
-  default multiplayer model.
+  default multiplayer path.
 - Client listen/nondedicated and future competitive client-predicted paths are
   separate packages.
 
@@ -26,9 +26,9 @@ EpochEngine clone while still making those packages reviewable and repeatable.
 - Keep license status explicit.
 - Import the smallest useful source slice.
 - Prefer adapter layers over wholesale source-tree dumps.
-- Do not promote prototypes into EpochEngine core until the API boundary,
+- Do not promote extension source into EpochEngine core until the API boundary,
   build/test evidence, and package ownership are documented.
-- Visual packages are compiled package scripts first. Voxel terrain, planetary
+- Visual code extensions are compiled package scripts first. Voxel terrain, planetary
   terrain, FFT ocean, and demo previews should materialize under
   `cache/packages/<package-id>/`, build from reviewed source, and register a
   live editor preview through the Package Manager rather than shipping as JSON

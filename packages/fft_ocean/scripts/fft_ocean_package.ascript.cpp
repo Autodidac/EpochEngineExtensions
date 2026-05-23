@@ -11,7 +11,7 @@ namespace
 
     constexpr Operation kOperations[] = {
         { OperationKind::HumanApprovalGate, "Confirm FFT ocean package", "FFT ocean is optional and belongs in cache/packages, not the minimal engine clone.", true },
-        { OperationKind::FetchGitSource, "Fetch package source", "Fetch the reviewed FFT ocean source into cache/packages/research_fft_ocean/source/.", true },
+        { OperationKind::FetchGitSource, "Fetch package source", "Fetch the reviewed FFT ocean source into cache/packages/fft_ocean/source/.", true },
         { OperationKind::StageCachePackage, "Stage ocean adapter", "Stage a renderer-neutral adapter that can be previewed in the editor.", true },
         { OperationKind::ConfigureBuild, "Configure ocean preview", "Configure the package preview without altering core renderer defaults.", true },
         { OperationKind::CompileAdapter, "Compile ocean preview", "Build the FFT ocean adapter through the Package Manager gate.", true },
@@ -19,11 +19,11 @@ namespace
     };
 
     constexpr PackageScriptPlan kPlan{
-        "research_fft_ocean",
+        "fft_ocean",
         "1",
-        "cache/packages/research_fft_ocean",
+        "cache/packages/fft_ocean",
         "https://github.com/Autodidac/EpochEngineExtensions",
-        "packages/research_fft_ocean",
+        "packages/fft_ocean",
         true,
         true,
         true,
