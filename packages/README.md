@@ -23,7 +23,7 @@ Required first-pass rules:
   reviewed source, a compiling adapter, and visible Package Manager evidence.
 - Current source-staged packages include real C++23 code and self-test targets
   instead of only manifests: `fft_ocean`, `voxel_authoring_tools`,
-  `voxel_planetoid_lod`, `planetary_terrain`, `forest_lsystem_extension`,
+  `voxel_planetoid_lod`, `planetary_terrain`, `forest_temporal_graph`,
   `engine_network_runtime`, `engine_client_listen_server`, and
   `engine_authoritative_dedicated_server`.
 - Network/server packages are contract/planning packages only. They must not

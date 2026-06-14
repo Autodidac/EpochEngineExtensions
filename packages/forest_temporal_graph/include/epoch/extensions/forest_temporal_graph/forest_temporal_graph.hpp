@@ -9,7 +9,7 @@
 #include <string_view>
 #include <vector>
 
-namespace epoch::extensions::forest_lsystem
+namespace epoch::extensions::forest_temporal_graph
 {
     struct Rule
     {
@@ -21,6 +21,12 @@ namespace epoch::extensions::forest_lsystem
     {
         std::string axiom{"F"};
         std::vector<Rule> rules;
+    };
+
+    struct TemporalGraphSettings
+    {
+        std::uint32_t iterations{2};
+        float seconds{}; // Timeline position for future animated growth profiles.
     };
 
     struct TurtleSettings

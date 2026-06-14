@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: LicenseRef-MIT-NoSell
 // Copyright (c) 2026 Adam Rushford
 
-#include "epoch/extensions/forest_lsystem_extension/forest_lsystem.hpp"
+#include "epoch/extensions/forest_temporal_graph/forest_temporal_graph.hpp"
 
 #include <cmath>
 #include <numbers>
 
-namespace epoch::extensions::forest_lsystem
+namespace epoch::extensions::forest_temporal_graph
 {
     namespace
     {

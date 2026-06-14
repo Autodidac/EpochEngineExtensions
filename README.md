@@ -39,7 +39,7 @@ software project, single-player game, or minimal generated engine clone.
 - `voxel_planetoid_lod`: renderer-neutral voxel planetoid field and chunk LOD
   package.
 - `voxel_authoring_tools`: sparse voxel authoring and brush replay package.
-- `forest_lsystem_extension`: optional Forest Factory L-system package.
+- `forest_temporal_graph`: optional Forest Factory temporal graph package.
 - `planetary_terrain`: planetary biome/tile composition package.
 - `fft_ocean`: FFT ocean simulation package.
 
