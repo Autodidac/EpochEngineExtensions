@@ -10,6 +10,13 @@ gates, cache/update plumbing, and stable API contracts. This repository is the
 review home for bulky optional packages that should not be copied into every
 software project, single-player game, or minimal generated engine clone.
 
+## Core Compatibility
+
+- Published EpochEngine runtime baseline: 0.87.69.
+- Current EpochEngine source contract: 0.87.70.
+- Renderer contexts, sampled render-to-texture, EpochGui, updater behavior, and
+  release packaging remain engine-owned contracts. Extensions consume those
+  contracts and do not replace or fork them.
 ## Package Boundary
 
 - EpochEngine mainline owns stable interfaces and inert package descriptors.
