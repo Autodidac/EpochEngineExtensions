@@ -13,7 +13,7 @@ software project, single-player game, or minimal generated engine clone.
 ## Core Compatibility
 
 - Published EpochEngine runtime baseline: `v0.87.69`.
-- Current EpochEngine source contract: `v0.87.70`.
+- Current EpochEngine source contract: `v0.87.71`.
 - Renderer contexts, sampled render-to-texture, EpochGui, updater behavior, and
   release packaging remain engine-owned contracts. Extensions consume those
   contracts and do not replace or fork them.
