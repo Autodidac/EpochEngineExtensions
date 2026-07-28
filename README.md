@@ -50,6 +50,10 @@ software project, single-player game, or minimal generated engine clone.
 - `forest_temporal_graph`: optional Forest Factory temporal graph package.
 - `planetary_terrain`: planetary biome/tile composition package.
 - `fft_ocean`: FFT ocean simulation package.
+- `capability_technique_gallery`: renderer-neutral labeled scene/catalog for
+  reference techniques and T0-CPU through T5-VK/DX provider routes. Reference
+  implementations remain reference-only until EpochEngine records its own
+  build and runtime evidence.
 
 Each source-staged package has a package-local `CMakeLists.txt`, public C++23
 header, source file, and self-test target. Package code is intentionally
