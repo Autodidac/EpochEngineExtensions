@@ -14,10 +14,17 @@ int main()
     if (blocked.valid || blocked.startsServer)
         throw std::runtime_error("local AI package bypassed its approval or server gate");
 
-    const auto approved = make_build_plan(layout, true);
+    const auto unpinned = make_build_plan(layout, true);
+    if (unpinned.valid || unpinned.immutableSourcePinned)
+        throw std::runtime_error("local AI package accepted an unpinned upstream source");
+
+    const auto approved = make_build_plan(
+        layout,
+        true,
+        "0123456789abcdef0123456789abcdef01234567");
     if (!approved.valid || approved.startsServer || approved.configureArguments.empty())
-        throw std::runtime_error("approved local AI build plan is incomplete");
-    if (approved.sourceLicense != "MIT")
-        throw std::runtime_error("llama.cpp license provenance is missing");
+        throw std::runtime_error("approved pinned local AI build plan is incomplete");
+    if (approved.sourceLicense != "MIT" || !approved.immutableSourcePinned)
+        throw std::runtime_error("llama.cpp license or immutable provenance is missing");
     return 0;
 }

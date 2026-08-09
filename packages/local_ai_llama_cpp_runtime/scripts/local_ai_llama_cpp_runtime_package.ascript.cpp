@@ -10,22 +10,21 @@ namespace
     using epoch::packages::script::PackageScriptPlan;
 
     constexpr Operation kOperations[] = {
-        { OperationKind::HumanApprovalGate, "Confirm local AI runtime setup", "Fetching or compiling llama.cpp requires a visible Package Manager approval.", true },
-        { OperationKind::FetchGitSource, "Fetch pinned llama.cpp source", "Stage reviewed ggml-org/llama.cpp source under executable-local cache/packages; record the immutable revision before build.", true },
-        { OperationKind::ConfigureBuild, "Configure offline llama-cli", "Configure C++23 Release with server, network download, and test targets disabled.", true },
-        { OperationKind::CompileAdapter, "Build llama-cli", "Build only the direct llama-cli executable and retain visible build evidence.", true },
-        { OperationKind::RegisterLivePreview, "Register runtime status", "Expose executable and GGUF readiness in Epoch AI without starting a listener or hidden service.", true }
+        { OperationKind::HumanApprovalGate, "Review local AI runtime plan", "Any future llama.cpp fetch or compilation requires visible Package Manager approval.", true },
+        { OperationKind::RegisterReferenceMaterial, "Require immutable llama.cpp revision", "Record a reviewed 40-character upstream git revision before a future executor may fetch source.", true },
+        { OperationKind::ConfigureBuild, "Plan offline llama-cli configuration", "Plan C++23 Release with server and curl targets disabled; this script does not execute CMake.", true },
+        { OperationKind::RegisterLivePreview, "Register runtime status contract", "Expose existing executable and GGUF readiness without starting a listener, fetch, build, or model process.", true }
     };
 
     constexpr PackageScriptPlan kPlan{
         "local_ai_llama_cpp_runtime",
-        "1",
+        "2",
         "cache/packages/local_ai_llama_cpp_runtime",
         "https://github.com/Autodidac/EpochEngineExtensions",
         "packages/local_ai_llama_cpp_runtime",
-        true,
-        true,
-        true,
+        false,
+        false,
+        false,
         false,
         kOperations,
         sizeof(kOperations) / sizeof(kOperations[0])

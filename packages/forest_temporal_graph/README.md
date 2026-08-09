@@ -1,23 +1,27 @@
-# Forest Factory Temporal Graph
+# Forest Temporal Graph Extension
 
 <!-- SPDX-License-Identifier: LicenseRef-MIT-NoSell -->
 <!-- Copyright (c) 2026 Adam Rushford -->
 
-Optional Forest Factory temporal graph extension source.
+Optional heavy temporal morphology/forest compilation source for Epoch.
 
-The core engine can eventually own the live Forest Factory workspace and runtime
-activation path. This package stages optional temporal graph/reference material
-and a deterministic segment generator that can feed future voxel occupancy,
-impostor, mesh, or renderer-adapter outputs.
-## Plant Lab V6 promotion map
+Plant Lab is the separate editor that authors custom trees, reusable tree
+assets, and forest configurations. Forest Factory is the placement portal in
+the standard editor that consumes those outputs. This package must not merge
+the editors or embed Plant Lab inside Forest Factory.
 
-The external Plant Lab reference currently documents stable nodes/parents,
-recursive shoots, dormant-sapling timing, per-organ birth/end ranges,
-3D/2.5D/2D/pattern modes, indexed mesh output, atlas UVs, and diffable state.
-This package must promote those contracts independently of its OpenGL demo
-viewer and keep graph regeneration separate from time-only mesh evaluation.
+The integration source is
+`Autodidac/Temporal_Parametric_Graph_Lindenmayer_System_Plant_Lab`. The
+operator has confirmed it is their own code, built for Epoch integration, and
+has explicitly authorized promotion. Source revision `40a3db7` is the recorded
+provenance point; there is no third-party license blocker.
 
-GitHub currently reports no license and the reference tree has no `LICENSE`.
-Do not copy its source into this package until compatible licensing or an
-explicit provenance record is present. The reference URL remains requirements
-evidence only.
+The useful behavior includes stable nodes/parents, recursive shoots,
+dormant-sapling timing, per-organ birth/end ranges, 3D/2.5D/2D/pattern modes,
+indexed mesh output, atlas UV intent, and diffable state. Production promotion
+must keep authoring documents, temporal operations, compiled artifacts, and
+physical preview/voxel/texture caches separate.
+
+Heavy graph compilation, mesh/foliage/impostor output, and voxel LOD payloads may
+live here. Stable authoring identity, validation, project asset references, and
+the separate Plant Lab/Forest Factory editor ownership remain engine contracts.

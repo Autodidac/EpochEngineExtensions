@@ -23,10 +23,12 @@ namespace epoch::extensions::local_ai_llama_cpp_runtime
     {
         RuntimeLayout layout{};
         std::string sourceRepository{};
+        std::string sourceRevision{};
         std::string sourceLicense{};
         std::vector<std::string> configureArguments{};
         std::vector<std::string> buildArguments{};
         bool humanApproved{};
+        bool immutableSourcePinned{};
         bool startsServer{};
         bool valid{};
         std::string diagnostic{};
@@ -44,7 +46,8 @@ namespace epoch::extensions::local_ai_llama_cpp_runtime
         const std::filesystem::path& executableLocalCache);
     [[nodiscard]] RuntimeBuildPlan make_build_plan(
         RuntimeLayout layout,
-        bool humanApproved);
+        bool humanApproved,
+        std::string immutableRevision = {});
     [[nodiscard]] RuntimeSelection validate_runtime_selection(
         const std::filesystem::path& executable,
         const std::filesystem::path& model);

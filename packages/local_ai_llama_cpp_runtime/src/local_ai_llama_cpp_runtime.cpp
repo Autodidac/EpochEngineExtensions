@@ -3,6 +3,8 @@
 
 #include "epoch/extensions/local_ai_llama_cpp_runtime/local_ai_llama_cpp_runtime.hpp"
 
+#include <algorithm>
+#include <cctype>
 #include <system_error>
 #include <utility>
 
@@ -14,6 +16,14 @@ namespace epoch::extensions::local_ai_llama_cpp_runtime
         {
             std::error_code error;
             return !path.empty() && std::filesystem::is_regular_file(path, error);
+        }
+
+        [[nodiscard]] bool immutable_git_revision(std::string_view revision)
+        {
+            return revision.size() == 40U &&
+                std::ranges::all_of(revision, [](unsigned char value) {
+                    return std::isxdigit(value) != 0;
+                });
         }
 
         [[nodiscard]] std::string quoted(const std::filesystem::path& path)
@@ -34,13 +44,18 @@ namespace epoch::extensions::local_ai_llama_cpp_runtime
         };
     }
 
-    RuntimeBuildPlan make_build_plan(RuntimeLayout layout, bool humanApproved)
+    RuntimeBuildPlan make_build_plan(
+        RuntimeLayout layout,
+        bool humanApproved,
+        std::string immutableRevision)
     {
         RuntimeBuildPlan plan{};
         plan.layout = std::move(layout);
         plan.sourceRepository = "https://github.com/ggml-org/llama.cpp";
+        plan.sourceRevision = std::move(immutableRevision);
         plan.sourceLicense = "MIT";
         plan.humanApproved = humanApproved;
+        plan.immutableSourcePinned = immutable_git_revision(plan.sourceRevision);
         plan.startsServer = false;
         plan.configureArguments = {
             "cmake", "-S", plan.layout.sourceRoot.generic_string(),
@@ -57,7 +72,12 @@ namespace epoch::extensions::local_ai_llama_cpp_runtime
         };
         if (!humanApproved)
         {
-            plan.diagnostic = "Source fetch and compilation require an explicit Package Manager approval.";
+            plan.diagnostic = "Source fetch and compilation require explicit Package Manager approval.";
+            return plan;
+        }
+        if (!plan.immutableSourcePinned)
+        {
+            plan.diagnostic = "An immutable 40-character llama.cpp git revision is required before fetch.";
             return plan;
         }
         if (plan.layout.packageRoot.empty() || plan.layout.modelRoot.empty())
@@ -66,7 +86,8 @@ namespace epoch::extensions::local_ai_llama_cpp_runtime
             return plan;
         }
         plan.valid = true;
-        plan.diagnostic = "Approved offline llama-cli build plan is ready; no server target will be built or started.";
+        plan.diagnostic =
+            "Pinned offline llama-cli build plan is ready; a separate approved executor must fetch and verify the revision.";
         return plan;
     }
 

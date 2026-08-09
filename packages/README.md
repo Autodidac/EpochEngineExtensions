@@ -26,7 +26,7 @@ Required first-pass rules:
   `voxel_planetoid_lod`, `planetary_terrain`, `forest_temporal_graph`,
   `capability_technique_gallery`, `engine_network_runtime`,
   `engine_client_listen_server`, and `engine_authoritative_dedicated_server`.
-- `local_ai_llama_cpp_runtime`: human-approved offline `llama-cli` build and direct GGUF runtime selection.
+- `local_ai_llama_cpp_runtime`: plan-only immutable-source-gated `llama-cli` build contract and direct operator-selected GGUF runtime validation.
 - `capability_technique_gallery` stages renderer-neutral scene stations and
   capability evidence. T0 is CPU/headless only; GLES/OpenGL presentation starts
   at T1, and T1 compute remains a separately proven feature.

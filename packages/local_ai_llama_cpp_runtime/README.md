@@ -1,25 +1,23 @@
 # Local AI llama.cpp Runtime
 
-This optional package connects Epoch to a local `llama-cli` process without an
-HTTP server. Package discovery is inert. Fetching and compiling source requires
-a visible Package Manager approval, and model weights remain operator supplied.
+This optional C++23 package plans and validates an operator-selected
+`llama-cli` process. It is not a downloader, installer, model trainer, or
+autonomous builder.
 
-The runtime layout is executable-local:
+Epoch can discover an existing `llama-cli` executable and a separately licensed
+GGUF model through executable-local cache paths or the
+`EPOCH_LLAMA_CPP_EXECUTABLE` and `EPOCH_AI_MODEL_PATH` environment variables.
+Epoch invokes the selected CLI as one captured child process with bounded output
+and timeout handling. It never starts `llama-server`.
 
-```text
-cache/
-├── packages/local_ai_llama_cpp_runtime/
-│   ├── source/
-│   ├── build/
-│   └── bin/llama-cli[.exe]
-└── models/**/*.gguf
-```
+The package's current source-build support is deliberately plan-only. A future
+executor must:
 
-Epoch can also use `EPOCH_LLAMA_CPP_EXECUTABLE` and `EPOCH_AI_MODEL_PATH` for
-explicit paths. It starts `llama-cli` as a captured child process with an
-argument vector, timeout, bounded output, and offline flags. It never builds or
-starts `llama-server`.
+1. obtain visible operator approval for network access and compilation;
+2. record and verify an immutable 40-character llama.cpp git revision;
+3. retain the upstream MIT license and source provenance;
+4. configure with `LLAMA_BUILD_SERVER=OFF` and `LLAMA_CURL=OFF`;
+5. build only the required `llama-cli` target and retain build evidence.
 
-The upstream runtime is [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp)
-and carries the MIT license. Every GGUF model has its own license and usage
-terms; installing this package does not grant rights to any model weights.
+Model weights are never included automatically. Each GGUF model has its own
+license, provenance, and project opt-in requirements.

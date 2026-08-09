@@ -3,13 +3,14 @@
   "displayName": "Local AI llama.cpp Runtime",
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
-  "status": "source-staged",
+  "status": "plan-only",
   "kind": "downloadable-source",
   "activation": "package-manager-opt-in",
-  "summary": "Human-approved C++23 helper for building or locating llama-cli and connecting an operator-licensed GGUF model directly to Epoch.",
+  "summary": "C++23 planner and validator for an operator-selected llama-cli plus separately licensed GGUF model.",
   "security": {
     "serverOrListenerAllowed": false,
-    "requiresExplicitNetworkApproval": false,
+    "requiresExplicitNetworkApproval": true,
+    "currentExecutorPerformsNetwork": false,
     "autoRunAllowed": false,
     "includeByDefault": false
   },
@@ -18,26 +19,30 @@
     "path": "packages/local_ai_llama_cpp_runtime",
     "upstreamReference": "https://github.com/ggml-org/llama.cpp",
     "upstreamLicense": "MIT",
-    "provenance": "C++23 offline llama-cli build and runtime-selection planner; model weights remain operator supplied"
+    "immutableRevisionRequired": true,
+    "immutableRevision": "",
+    "provenance": "Plan-only C++23 offline llama-cli build contract; a future approved fetch executor must supply and record an immutable upstream revision"
   },
   "engineBoundary": {
     "epochPackageId": "local_ai_llama_cpp_runtime",
     "expectedCacheRoot": "cache/packages/local_ai_llama_cpp_runtime",
-    "notes": "Epoch invokes llama-cli directly with argv and captured output. This package never starts llama-server or any listener."
+    "notes": "Epoch can invoke an existing llama-cli directly with argv and captured output. This package starts no server, listener, fetch, build, or model process during discovery or staging."
   },
   "script": {
     "language": "C++23",
     "path": "scripts/local_ai_llama_cpp_runtime_package.ascript.cpp",
     "api": "epoch_package_script_api",
-    "mode": "download-stage-build-live-preview",
-    "downloadsSource": true,
-    "compilesSource": true,
-    "livePreview": true,
+    "mode": "plan-only",
+    "downloadsSource": false,
+    "compilesSource": false,
+    "livePreview": false,
+    "runtimeStatusOnly": true,
     "humanGated": true,
     "autoRunAllowed": false
   },
   "build": {
     "humanGated": true,
+    "planOnly": true,
     "sourceFiles": [
       "CMakeLists.txt",
       "include/epoch/extensions/local_ai_llama_cpp_runtime/local_ai_llama_cpp_runtime.hpp",
@@ -56,7 +61,8 @@
   },
   "notes": [
     "llama.cpp is MIT licensed; GGUF model licenses are separate and must be reviewed by the operator.",
-    "The package plans an offline llama-cli build with LLAMA_BUILD_SERVER=OFF and LLAMA_CURL=OFF.",
-    "No native extension or model is executed during package discovery or staging."
+    "The current package validates an offline llama-cli plan with LLAMA_BUILD_SERVER=OFF and LLAMA_CURL=OFF.",
+    "A future fetch executor must require visible network approval and verify an immutable revision before configuration.",
+    "No native extension, upstream source, or model is fetched, built, or executed during package discovery or staging."
   ]
 }
