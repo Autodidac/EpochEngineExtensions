@@ -4,7 +4,7 @@
   "manifestLicense": "LicenseRef-MIT-NoSell",
   "manifestCopyright": "Copyright (c) 2026 Adam Rushford",
   "status": "plan-only",
-  "kind": "downloadable-source",
+  "kind": "runtime-plan",
   "activation": "package-manager-opt-in",
   "summary": "C++23 planner and validator for an operator-selected llama-cli plus separately licensed GGUF model.",
   "security": {
