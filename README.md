@@ -3,7 +3,8 @@
 <!-- SPDX-License-Identifier: LicenseRef-MIT-NoSell -->
 <!-- Copyright (c) 2026 Adam Rushford -->
 
-Optional package source and package manifests for EpochEngine.
+Optional package source, package manifests and bounded demonstrations for EpochEngine.
+Current companion source version: `v0.2.1`.
 
 EpochEngine keeps the lean core runtime, editor, package descriptors, security
 gates, cache/update plumbing, and stable API contracts. This repository is the
@@ -12,8 +13,10 @@ software project, single-player game, or minimal generated engine clone.
 
 ## Core Compatibility
 
-- Published EpochEngine runtime baseline: `v0.87.69`.
-- Current EpochEngine source contract: `v0.87.72`.
+- Published EpochEngine Windows/Linux runtime baseline: `v0.90.33`.
+- Current EpochEngine source contract: `v0.90.35`.
+- These identities describe the selected host, not blanket package/runtime
+  compatibility proof. Package-specific API, build and admission checks still apply.
 - Renderer contexts, sampled render-to-texture, EpochGui, updater behavior, and
   release packaging remain engine-owned contracts. Extensions consume those
   contracts and do not replace or fork them.
@@ -61,6 +64,23 @@ renderer-neutral unless the package name says otherwise.
 
 ## Validate
 
+The reconciled root build includes the preserved ten source packages and the
+Site-origin tiered-terrain module. Select the authoritative Engine modules;
+substitute terrain definitions are never generated or copied here.
+
+```powershell
+cmake -S . -B build -DEPOCH_ENGINE_MODULE_DIR=C:/path/to/EpochEngine/Engine/modules
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
+```
+
+On Windows, use a short absolute build directory if the checkout is deeply
+nested: MSVC's generated module/tracker paths can otherwise exceed its path
+limit. A single-node build (`--parallel 1 -- /nodeReuse:false`) also avoids
+MSBuild worker-IPC restrictions in constrained build environments.
+
+For the manifest-only check:
+
 ```powershell
 .\run_validate_packages.ps1
 ```
@@ -69,6 +89,23 @@ The validator is intentionally small and standard-library only. It checks that
 package manifests are present, deterministic JSON, security-gated where needed,
 aligned with EpochEngine package policy, and that source/visual packages point
 at a real C++23 package runner script.
+
+## Demonstration Catalog And Provenance
+
+`demonstrations/tiered_terrain` adds deterministic bounded local heightfields
+through the host's `terrain.foundation` and `render.math` modules. Its own README,
+license, source and contract remain separate from the older package trees.
+
+`catalog/extensions.json` retains the eight stable Engine-facing identities and
+their admission states. It is not an exhaustive listing of the ten preserved
+package trees: their manifests and source remain under `packages/`. A source
+archive does not activate a package, prove native renderer integration, install
+a model, or authorize a server/listener.
+
+The GitHub and Site histories are joined, not rewritten; previous `v0.1.0` and
+`v0.2.0` tags and published archives remain immutable. See
+[source reconciliation](docs/source_reconciliation.md) for the exact parents,
+ownership and validation boundary.
 
 ## License
 
