@@ -4,7 +4,7 @@
 <!-- Copyright (c) 2026 Adam Rushford -->
 
 Optional package source, package manifests and bounded demonstrations for EpochEngine.
-Current companion source version: `v0.2.1`.
+Current companion source version: `v0.2.2`.
 
 EpochEngine keeps the lean core runtime, editor, package descriptors, security
 gates, cache/update plumbing, and stable API contracts. This repository is the
@@ -13,8 +13,11 @@ software project, single-player game, or minimal generated engine clone.
 
 ## Core Compatibility
 
-- Published EpochEngine Windows/Linux runtime baseline: `v0.90.33`.
-- Current EpochEngine source contract: `v0.90.35`.
+- Selected Public EpochEngine source: `v0.90.183`, commit
+  `61c835459f7ed8bc72994376c6966574b0c4949c`.
+- This companion release is optional source; it does not select or replace an
+  installed Engine runtime. Windows Debug/Release CPU checks use that exact
+  Public source's `render.math` and `terrain.foundation` modules.
 - These identities describe the selected host, not blanket package/runtime
   compatibility proof. Package-specific API, build and admission checks still apply.
 - Renderer contexts, sampled render-to-texture, EpochGui, updater behavior, and
@@ -62,6 +65,14 @@ Each source-staged package has a package-local `CMakeLists.txt`, public C++23
 header, source file, and self-test target. Package code is intentionally
 renderer-neutral unless the package name says otherwise.
 
+## Models and project assistance
+
+The local-model package is an offline **project runtime plan**, not an Engine
+model installer or a bundle of model weights. Install/select an Engine model in
+the Engine's Model Manager. Project models have their own licenses and opt-in.
+This optional package catalog does not grant access to the Engine's source or
+provide its private self-coding component.
+
 ## Validate
 
 The reconciled root build includes the preserved ten source packages and the
@@ -69,7 +80,7 @@ Site-origin tiered-terrain module. Select the authoritative Engine modules;
 substitute terrain definitions are never generated or copied here.
 
 ```powershell
-cmake -S . -B build -DEPOCH_ENGINE_MODULE_DIR=C:/path/to/EpochEngine/Engine/modules
+cmake -S . -B build -DEPOCH_ENGINE_MODULE_DIR=C:/path/to/EpochEngine/Engine/modules -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded
 cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
@@ -78,6 +89,10 @@ On Windows, use a short absolute build directory if the checkout is deeply
 nested: MSVC's generated module/tracker paths can otherwise exceed its path
 limit. A single-node build (`--parallel 1 -- /nodeReuse:false`) also avoids
 MSBuild worker-IPC restrictions in constrained build environments.
+
+The Windows CI workflow checks the same two configurations against the pinned
+Public source. It does not run an Editor, model, listener or renderer. Linux,
+macOS and native Package Manager activation remain separate acceptance gates.
 
 For the manifest-only check:
 
@@ -106,6 +121,19 @@ The GitHub and Site histories are joined, not rewritten; previous `v0.1.0` and
 `v0.2.0` tags and published archives remain immutable. See
 [source reconciliation](docs/source_reconciliation.md) for the exact parents,
 ownership and validation boundary.
+
+## Source packages
+
+After committing the checked source, create matched source ZIP/TAR archives and
+checksums with the standard-library packer:
+
+```powershell
+python tools/package_source.py --output C:/path/to/checkout-local/package-staging
+```
+
+It exports committed files only and verifies every ZIP/TAR file body. Git
+history, build outputs, model weights and private runtime data are excluded.
+The archive is source, not an installed extension or a runnable Engine release.
 
 ## License
 

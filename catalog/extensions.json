@@ -1,6 +1,6 @@
 {
   "schema": "epoch-engine-extension-catalog/v1",
-  "catalog_revision": "source-v0.2.1-reconciled",
+  "catalog_revision": "source-v0.2.2-public-engine-183",
   "repository": "EpochEngineExtensions",
   "availability": "mixed_local_source",
   "automatic_execution": false,
@@ -92,11 +92,11 @@
     {
       "stable_id": "4558540000000008",
       "package_id": "local_ai_llama_cpp_runtime",
-      "display_name": "Local AI Tooling",
-      "summary": "Operator-approved local inference and guarded development tooling; no listener, hidden service, model download, or installation is implied.",
+      "display_name": "Project Local Model Runtime Plan",
+      "summary": "Optional offline llama-cli/GGUF runtime plan for a project. No model weights, Engine-native model installation, source self-coding, listener or hidden service is included.",
       "source_key": "tooling/local_ai",
       "platforms": ["windows", "linux", "macos", "headless"],
-      "capabilities": ["native_plugin", "local_ai_inference", "guarded_ai_development", "headless_tools", "editor_workspace"],
+      "capabilities": ["native_plugin", "local_ai_inference", "headless_tools", "editor_workspace"],
       "availability": "descriptor_only",
       "installable_payload": false,
       "automatic_execution": false

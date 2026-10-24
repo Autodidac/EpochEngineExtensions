@@ -54,3 +54,23 @@ defects or proof of a model/renderer problem.
 Linux/macOS builds and native Package Manager admission are not newly qualified
 by this Windows CPU validation. Historical v0.2.0 packages and their evidence
 are preserved; this new full-repository source export does not replace them.
+
+## October24 compatibility update — v0.2.2
+
+The complete reconciled source was checked against Public EpochEngine 0.90.183,
+commit `61c835459f7ed8bc72994376c6966574b0c4949c`. Windows MSVC 19.44,
+CMake 4.4.2 and embedded debug information pass all 13 CPU contracts in both
+Debug and Release. The initial PDB-manager mismatch was a build-host debug-info
+issue; selecting `CMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded` resolved it.
+No package algorithm, terrain module, public C++ API or license text changed.
+
+The catalog now describes the local-model package as an optional offline
+project runtime plan, distinct from installing/selecting an Engine model.
+The repository is not an AI self-development catalog. The private Engine
+self-coding component is not part of this source.
+
+Windows CI pins the same Public Engine commit and checks both configurations.
+The source packer uses only committed files, rejects non-source entries and
+verifies matching ZIP/TAR bodies with SHA256 checksums. Existing tags and
+published artifacts remain unchanged. These checks do not establish Linux,
+macOS, native package activation, renderer presentation or model execution.

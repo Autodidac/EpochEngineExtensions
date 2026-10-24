@@ -39,3 +39,6 @@ Bin/
 bin/
 __pycache__/
 *.pyc
+/out/
+/.ci-tools/
+/.ci-engine/

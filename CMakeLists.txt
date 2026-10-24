@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 4.4)
 
 set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
-project(EpochEngineExtensions VERSION 0.2.1 LANGUAGES CXX)
+project(EpochEngineExtensions VERSION 0.2.2 LANGUAGES CXX)
 
 set(
     EPOCH_ENGINE_MODULE_DIR
