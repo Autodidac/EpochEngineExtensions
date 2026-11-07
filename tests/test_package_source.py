@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import tarfile
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -35,6 +36,7 @@ class SourcePackaging(unittest.TestCase):
         files = {
             '.gitattributes': b'raw-source.hpp -text\n',
             'raw-source.hpp': b'// exact provenance bytes\r\n',
+            'run.sh': b'#!/bin/sh\nexit 0\n',
             'LICENSE': b'fixture license\n',
             'README.md': b'fixture source\n',
             'CMakeLists.txt': b'project(EpochEngineExtensions VERSION 0.2.3 LANGUAGES CXX)\n',
@@ -50,8 +52,10 @@ class SourcePackaging(unittest.TestCase):
             return subprocess.check_output(['git', '-C', str(source), *arguments], stderr=subprocess.STDOUT)
         git('init', '--quiet')
         git('config', 'core.autocrlf', 'true')
+        git('config', 'core.filemode', 'false')
         git('remote', 'add', 'origin', packer.REPOSITORY_URL)
         git('add', '.')
+        git('update-index', '--chmod=+x', 'run.sh')
         git('-c', 'user.name=Epoch package contract', '-c', 'user.email=package-contract@local',
             '-c', 'commit.gpgsign=false', 'commit', '--quiet', '-m', 'Fixture source owner')
         return source, files, git
@@ -95,10 +99,14 @@ class SourcePackaging(unittest.TestCase):
         self.assertEqual(receipt['repository'], packer.REPOSITORY_URL)
         self.assertEqual(receipt['commit'], git('rev-parse', 'HEAD').decode().strip())
         with zipfile.ZipFile(next(output.glob('*.zip'))) as archive:
-            for name in archive.namelist():
-                relative = name.split('/', 1)[1]
-                self.assertNotIn('.git', Path(relative).parts)
-                self.assertEqual(archive.read(name), git('show', 'HEAD:' + relative))
+            with tarfile.open(next(output.glob('*.tar.gz')), 'r:gz') as tar:
+                for entry in archive.infolist():
+                    relative = entry.filename.split('/', 1)[1]
+                    self.assertNotIn('.git', Path(relative).parts)
+                    self.assertEqual(archive.read(entry), git('show', 'HEAD:' + relative))
+                    mode = int(git('ls-tree', 'HEAD', relative).split()[0], 8)
+                    self.assertEqual(entry.external_attr >> 16, mode)
+                    self.assertEqual(tar.getmember(entry.filename).mode, mode & 0o777)
         with patch.object(packer, 'ROOT', source), redirect_stdout(io.StringIO()):
             with self.assertRaises(FileExistsError):
                 packer.package(output)

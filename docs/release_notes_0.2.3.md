@@ -9,7 +9,7 @@ model, renderer or network listener, and does not activate any package.
 Packaging now requires this repository's own physical `.git` directory and
 the exact Site origin. Git calls select that directory and work tree explicitly;
 a detached Extensions folder cannot discover an enclosing Engine repository.
-Archive generation preserves exact committed bodies regardless of the user's
+Archive generation preserves exact committed bodies and file modes regardless of the user's
 Git newline settings; the reviewed upstream subset retains its provenance
 bytes and line endings. Source receipts and package source links identify the Site
 repository. The manifest validation wrapper now preserves its validator's exit.

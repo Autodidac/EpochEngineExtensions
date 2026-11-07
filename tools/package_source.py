@@ -34,6 +34,7 @@ def committed_source():
     commit = git('rev-parse', 'HEAD').decode().strip()
     files = {}
     with tarfile.open(fileobj=io.BytesIO(git('-c', 'core.autocrlf=false', '-c', 'core.eol=lf',
+                                            '-c', 'tar.umask=0022',
                                             'archive', '--format=tar', commit))) as archive:
         for item in archive:
             if item.isdir():
