@@ -1,6 +1,6 @@
 {
   "schema": "epoch-engine-extension-catalog/v1",
-  "catalog_revision": "source-v0.2.2-public-engine-183",
+  "catalog_revision": "source-v0.2.3-current-source-preparation",
   "repository": "EpochEngineExtensions",
   "availability": "mixed_local_source",
   "automatic_execution": false,

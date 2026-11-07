@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 4.4)
 
 set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
-project(EpochEngineExtensions VERSION 0.2.2 LANGUAGES CXX)
+project(EpochEngineExtensions VERSION 0.2.3 LANGUAGES CXX)
 
 set(
     EPOCH_ENGINE_MODULE_DIR
@@ -106,6 +106,10 @@ if(BUILD_TESTING)
     add_test(
         NAME EpochEngineExtensions.PackageManifests
         COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tools/validate_packages.py"
+    )
+    add_test(
+        NAME EpochEngineExtensions.SourcePackaging
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_source.py"
     )
     add_executable(EpochTieredTerrainContract
         demonstrations/tiered_terrain/tests/tiered_terrain.generator_contract.cpp

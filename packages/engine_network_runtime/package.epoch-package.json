@@ -14,7 +14,7 @@
     "includeByDefault": false
   },
   "source": {
-    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "repo": "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
     "path": "packages/engine_network_runtime",
     "provenance": "inert C++23 network/session contract source staged in this package"
   },

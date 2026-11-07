@@ -4,7 +4,7 @@
 <!-- Copyright (c) 2026 Adam Rushford -->
 
 Optional package source, package manifests and bounded demonstrations for EpochEngine.
-Current companion source version: `v0.2.2`.
+Current companion source version: `v0.2.3` (local delivery preparation).
 
 EpochEngine keeps the lean core runtime, editor, package descriptors, security
 gates, cache/update plumbing, and stable API contracts. This repository is the
@@ -134,6 +134,9 @@ python tools/package_source.py --output C:/path/to/checkout-local/package-stagin
 It exports committed files only and verifies every ZIP/TAR file body. Git
 history, build outputs, model weights and private runtime data are excluded.
 The archive is source, not an installed extension or a runnable Engine release.
+Packaging requires this source owner's physical `.git` directory and the exact
+Site origin `https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git`.
+A detached source folder cannot discover an enclosing Engine repository.
 
 ## License
 

@@ -14,7 +14,7 @@
     "includeByDefault": false
   },
   "source": {
-    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "repo": "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
     "path": "packages/forest_temporal_graph",
     "upstreamReference": "https://github.com/Autodidac/Temporal_Parametric_Graph_Lindenmayer_System_Plant_Lab",
     "provenance": "renderer-neutral C++23 Forest Factory temporal graph source staged in this package"
