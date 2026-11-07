@@ -15,6 +15,7 @@ import planet.terrain;
 import planet.streaming;
 import planet.coverage;
 import planet.clouds;
+import asset.cloud_volume;
 import asset.mesh_artifact;
 import asset.texture_artifact;
 import project.planetary_snapshot;
@@ -247,7 +248,7 @@ namespace
         std::erase_if(state.resident,[&](const auto& resident){return !stream::detail::wanted(state,resident.key);});
         return true;
     }
-    int write_snapshot(const fs::path& output,const stream::State& state,std::uint64_t request_id,std::size_t built,std::size_t reused,artifact::Limits limits,std::optional<double> simulation_seconds,std::string_view patch_identity,tasks::Scheduler& scheduler,WorkerActivity& activity,bool metric_frame=false, const std::shared_ptr<const artifact::Artifact>& cloud_mesh={})
+    int write_snapshot(const fs::path& output,const stream::State& state,std::uint64_t request_id,std::size_t built,std::size_t reused,artifact::Limits limits,std::optional<double> simulation_seconds,std::string_view patch_identity,tasks::Scheduler& scheduler,WorkerActivity& activity,bool metric_frame=false, const std::shared_ptr<const artifact::Artifact>& cloud_mesh={},const std::optional<epochengine::asset::cloud_volume::Recipe>& cloud_density={})
     {
         const auto snapshot_started=std::chrono::steady_clock::now();
         auto assembly_done=snapshot_started,validation_done=snapshot_started,encoding_done=snapshot_started,verification_done=snapshot_started;
@@ -272,8 +273,9 @@ namespace
             std::vector<artifact::Vertex> vertices;
             std::vector<std::uint32_t> indices;
             patches::Metadata metadata;
-            if(cloud_mesh)metadata.cloud=patches::CloudLayer{static_cast<std::uint32_t>(state.request.body_index),
-                {origin.x,origin.y,origin.z},state.world.body(state.request.body_index).radius,604800.0,cloud_mesh};
+            if(cloud_mesh||cloud_density)metadata.cloud=patches::CloudLayer{static_cast<std::uint32_t>(state.request.body_index),
+                {origin.x,origin.y,origin.z},state.world.body(state.request.body_index).radius,
+                cloud_density?cloud_density->wind_period_seconds:604800.0,cloud_mesh,cloud_density};
 #if defined(EPOCH_PLANET_HAS_WATER_EXTENSION)
             epoch::extensions::planetary_terrain::water::Surface ocean;
             if(state.request.ocean_surface&&!ocean.evaluate(state.world.seed(),state.request.seconds,limits.maximum_bytes))return fail("ocean evaluation");
@@ -509,7 +511,9 @@ int planet_stream_main(int argc,char** argv)
     core::WorldConfig world;
     std::string patch_identity;
     // epoch.planet.cloud-layer.v1: explicit opt-in preserves older host bytes.
-    const bool cloud_transport=argc>1&&std::string_view{argv[argc-1]}=="--cloud-layer-v1";
+    // epoch.planet.cloud-density.v1: v5 metric density; no lobe mesh is emitted.
+    const bool cloud_density_transport=argc>1&&std::string_view{argv[argc-1]}=="--cloud-density-v1";
+    const bool cloud_transport=cloud_density_transport||(argc>1&&std::string_view{argv[argc-1]}=="--cloud-layer-v1");
     if(cloud_transport)--argc;
     // Additive capability: epoch.planet.view-footprint.v1 carries the camera
     // basis for altitude-blended forward/45-degree-down/radial-nadir refinement.
@@ -592,7 +596,14 @@ int planet_stream_main(int argc,char** argv)
         std::size_t reused{},built{};
         if(!prepare_cache(directory,state,seed,scheduler,activity,reused))return 9;
         std::shared_ptr<const artifact::Artifact> cloud_mesh;
-        if(cloud_transport)
+        std::optional<epochengine::asset::cloud_volume::Recipe> cloud_density;
+        if(cloud_density_transport)
+        {
+            const auto& body=state.world.body(state.request.body_index);
+            cloud_density=epoch::extensions::planetary_terrain::clouds::density_recipe(body);
+            if(epoch::extensions::planetary_terrain::clouds::supports(body)&&!cloud_density)return 9;
+        }
+        if(cloud_transport&&!cloud_density_transport)
         {
             const auto& body=state.world.body(request.body_index);
             if(epoch::extensions::planetary_terrain::clouds::supports(body))
@@ -686,13 +697,13 @@ int planet_stream_main(int argc,char** argv)
         const auto meshed=std::chrono::steady_clock::now();
         if(!save_plan(directory,state))return 9;
         const auto saved=std::chrono::steady_clock::now();
-        auto result=write_snapshot(output,state,request_id,built,reused,limits,seconds,patch_identity,scheduler,activity,metric_frame,cloud_mesh);
+        auto result=write_snapshot(output,state,request_id,built,reused,limits,seconds,patch_identity,scheduler,activity,metric_frame,cloud_mesh,cloud_density);
         const auto requested_draw=stream::stats(state).draw_patches;
         std::size_t budget_reductions{};
         while(result==10&&budget_reductions<8u&&coarsen_snapshot(state))
         {
             ++budget_reductions;
-            result=write_snapshot(output,state,request_id,built,reused,limits,seconds,patch_identity,scheduler,activity,metric_frame,cloud_mesh);
+            result=write_snapshot(output,state,request_id,built,reused,limits,seconds,patch_identity,scheduler,activity,metric_frame,cloud_mesh,cloud_density);
         }
         if(result==10)return 5; // Refuse if the bounded retries cannot admit a complete cut.
         if(result==0&&budget_reductions)

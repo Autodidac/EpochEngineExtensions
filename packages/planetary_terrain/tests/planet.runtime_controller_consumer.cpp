@@ -107,9 +107,10 @@ int main()
         auto projectionFrame=projectionController->capture().frame;
         const auto earthProjection=host::preview_frame(projectionFrame);
         require(earthProjection&&earthProjection->body_count==6u&&earthProjection->anchor==0u,"Earth projection refused");
-        require(earthProjection->bodies[0].cloud_mesh&&earthProjection->bodies[2].cloud_mesh
-            &&!earthProjection->bodies[5].cloud_mesh,"cloud geometry did not follow atmosphere-bearing body scope");
-        const auto retainedClouds=projectionFrame.bodies[0].cloud_mesh;
+        require(earthProjection->bodies[0].cloud_density&&earthProjection->bodies[2].cloud_density
+            &&!earthProjection->bodies[5].cloud_density&&!earthProjection->bodies[0].cloud_mesh,
+            "cloud density did not follow atmosphere-bearing body scope or duplicated mesh lobes");
+        const auto retainedClouds=projectionFrame.bodies[0].cloud_density;
         auto cloudClock=host::create_controller(binding);
         for(unsigned tick=0;tick<4u;++tick)(void)advance(*cloudClock,{.elapsed_seconds=0.25});
         const auto cloudSample=cloudClock->capture().frame;
@@ -119,8 +120,8 @@ int main()
             &&restoredCloudClock->capture().frame.bodies[0].cloud_wind_degrees==cloudSample.bodies[0].cloud_wind_degrees,
             "session restore lost cloud time");
         (void)advance(*projectionController,{.elapsed_seconds=0.25});
-        require(projectionController->capture().frame.bodies[0].cloud_mesh==retainedClouds,
-            "cloud time rebuilt immutable geometry");
+        require(projectionController->capture().frame.bodies[0].cloud_density==retainedClouds,
+            "cloud time rebuilt immutable density recipe");
         auto invalidCloud=projectionFrame;
         invalidCloud.bodies[0].cloud_wind_degrees=std::numeric_limits<double>::infinity();
         require(!host::preview_frame(invalidCloud),"non-finite cloud wind entered the host");

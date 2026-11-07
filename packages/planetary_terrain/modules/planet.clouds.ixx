@@ -6,11 +6,13 @@ module;
 #include <cstdint>
 #include <memory>
 #include <numbers>
+#include <optional>
 #include <stop_token>
 #include <vector>
 export module planet.clouds;
 import planet.terrain;
 import asset.mesh_artifact;
+import asset.cloud_volume;
 
 export namespace epoch::extensions::planetary_terrain::clouds
 {
@@ -30,6 +32,20 @@ export namespace epoch::extensions::planetary_terrain::clouds
         return body.atmosphere_height>0.0&&std::isfinite(body.radius)&&body.radius>0.0
             &&std::isfinite(body.height_scale)&&body.height_scale>=0.0
             &&(body.kind==core::BodyKind::temperate||body.kind==core::BodyKind::ice);
+    }
+    [[nodiscard]] inline std::optional<epochengine::asset::cloud_volume::Recipe> density_recipe(
+        const core::Body& body) noexcept
+    {
+        if(!supports(body))return {};
+        epochengine::asset::cloud_volume::Recipe value{
+            .seed=body.seed^0xc10d5u,
+            .base_altitude_meters=(std::max)(1.0,body.height_scale*0.15),
+            .thickness_meters=(std::max)(1.0,body.height_scale*0.12),
+            .horizontal_scale_meters=(std::max)(10.0,body.radius*0.002),
+            .coverage=0.60f,.extinction_per_meter=0.0012f};
+        // Preserve optical depth when a user authors a much smaller world.
+        value.extinction_per_meter=static_cast<float>((std::min)(1.0,2.592/value.thickness_meters));
+        return epochengine::asset::cloud_volume::valid(value,body.radius)?std::optional{value}:std::nullopt;
     }
     [[nodiscard]] inline std::shared_ptr<const mesh::Artifact> build(
         const core::Body& body,std::stop_token stop = {}) noexcept

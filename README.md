@@ -20,6 +20,10 @@ software project, single-player game, or minimal generated engine clone.
   Public source's `render.math` and `terrain.foundation` modules.
 - These identities describe the selected host, not blanket package/runtime
   compatibility proof. Package-specific API, build and admission checks still apply.
+- The optional cloud-density exporter/controller additionally requires the Engine
+  `asset.cloud_volume` and v5 planetary-snapshot contracts prepared for 0.90.185.
+  They are not supplied by the 0.90.183 compatibility baseline above. CPU transport
+  tests do not establish native cloud appearance or support in every renderer.
 - Renderer contexts, sampled render-to-texture, EpochGui, updater behavior, and
   release packaging remain engine-owned contracts. Extensions consume those
   contracts and do not replace or fork them.

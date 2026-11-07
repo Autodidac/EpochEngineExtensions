@@ -197,3 +197,24 @@ project-file saving. Run `epoch_planet_runtime_controller_contract` for the
 standalone CPU checks; its host-admission port is a test fixture. Actual Engine
 startup, input controls, visible moons and session save/reopen need their own
 integration acceptance.
+
+## Optional cloud-density transport
+
+The offline exporter accepts `--cloud-density-v1` only when explicitly selected by
+its host. This writes a v5 planetary snapshot containing a bounded analytic cloud
+density recipe instead of a cloud-lobe mesh. `--cloud-layer-v1` retains the v4
+mesh transport for existing consumers. The source build needs the Engine's
+`asset.cloud_volume` module and v5 snapshot codec prepared for 0.90.185; it cannot
+build this route against the older 0.90.183 compatibility baseline.
+
+`planet.clouds` owns the metric recipe, and the host owns rendering, depth,
+lighting and resource admission. The recipe retains deterministic seed, wind and
+simulation time. It does not provide editable voxel storage, weather simulation
+or permission to remove terrain hidden by clouds. The optional runtime controller
+returns the same density description; it does not create a renderer or worker pool.
+
+The CPU transport test exports and reads both v4 and v5 snapshots through the
+actual producer and codec. Native OpenGL appearance, occlusion, performance,
+resize and other renderer support remain separate Engine acceptance gates. A
+saved project needs explicit reviewed package-source update and regeneration to
+receive this transport; existing scenes and package pins are not silently changed.

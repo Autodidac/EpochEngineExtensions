@@ -4,9 +4,11 @@
 #include <cstdint>
 #include <fstream>
 #include <limits>
+#include <optional>
 #include <stdexcept>
 #include <stop_token>
 import planet.clouds;
+import asset.cloud_volume;
 import planet.terrain;
 import project.planetary_runtime;
 namespace clouds=epoch::extensions::planetary_terrain::clouds;
@@ -21,6 +23,12 @@ int main()
         {
             const core::Universe world{1337,{0u,radius}};
             const auto& body=world.body(0u);
+            const auto density=clouds::density_recipe(body);
+            require(density&&epochengine::asset::cloud_volume::valid(*density,body.radius),
+                "bounded metric cloud recipe is missing");
+            require(clouds::density_recipe(body)==density,"cloud recipe is nondeterministic");
+            require(!clouds::density_recipe(world.body(5u))&&!clouds::density_recipe(world.body(4u)),
+                "airless moon/gas body gained unsupported density");
             const auto first=clouds::build(body),second=clouds::build(body);
             require(first&&second&&first->key()==second->key(),"cloud layer is missing or nondeterministic");
             require(first->vertices().size()<clouds::limits.maximum_vertices
@@ -46,6 +54,7 @@ int main()
                     "cloud lobe triangle winding disagrees with its outward normals");
             }
             const core::Universe different{1338,{0u,radius}};
+            require(clouds::density_recipe(different.body(0u))->seed!=density->seed,"cloud recipe seed did not change");
             require(clouds::build(different.body(0u))->key()!=first->key(),"cloud seed does not affect geometry");
             require(clouds::build(world.body(2u))!=nullptr,"ice atmosphere has no cloud layer");
             require(!clouds::build(world.body(5u))&&!clouds::build(world.body(4u)),

@@ -14,6 +14,7 @@
 import planet.terrain;
 import project.planetary_snapshot;
 import asset.mesh_artifact;
+import asset.cloud_volume;
 namespace p=epochengine::project_planetary_snapshot;
 namespace mesh=epochengine::asset::mesh;
 namespace core=epoch::extensions::planetary_terrain::core;
@@ -120,6 +121,28 @@ int main(int argc,char** argv)
     if(p::decode(cloudBytes,*fine->artifact,cloudy.identity,limits,cloudStop.get_token()))return 67;
     auto cloudless=*roundtrip;cloudless.cloud.reset();
     if(p::encode(cloudless,*fine->artifact,limits)!=p::encode(fine->metadata,*fine->artifact,limits))return 68;
+    auto volume=fine->metadata;
+    epochengine::asset::cloud_volume::Recipe recipe{77u,2700.0,2160.0,12742.0,0.60f,0.0012f};
+    volume.cloud=p::CloudLayer{0u,{1e9,2e9,3e9},6371000.0,604800.0,{},recipe};
+    const auto volumeBytes=p::encode(volume,*fine->artifact,limits);
+    if(volumeBytes.empty()||std::to_integer<unsigned>(volumeBytes[4])!=5u)return 80;
+    const auto volumeRead=p::decode(volumeBytes,*fine->artifact,volume.identity,limits);
+    if(!volumeRead||!volumeRead->cloud||volumeRead->cloud->artifact
+        ||volumeRead->cloud->density!=volume.cloud->density||volumeRead->cloud->center_meters!=volume.cloud->center_meters)return 81;
+    auto damagedVolume=volumeBytes;damagedVolume[damagedVolume.size()-36u]^=std::byte{1};
+    if(p::decode(damagedVolume,*fine->artifact,volume.identity,limits))return 82;
+    if(p::decode(std::span{volumeBytes}.first(volumeBytes.size()-1u),*fine->artifact,volume.identity,limits))return 83;
+    if(p::decode(volumeBytes,*fine->artifact,volume.identity,limits,cloudStop.get_token()))return 84;
+    auto ambiguous=volume;ambiguous.cloud->artifact=coarse->artifact;
+    if(p::valid_metadata(ambiguous,*fine->artifact,limits)||!p::encode(ambiguous,*fine->artifact,limits).empty())return 85;
+    auto invalidDensity=volume;invalidDensity.cloud->density->thickness_meters=NAN;
+    if(p::valid_metadata(invalidDensity,*fine->artifact,limits))return 86;
+    invalidDensity=volume;invalidDensity.cloud->density->wind_period_seconds=60.0;
+    if(p::valid_metadata(invalidDensity,*fine->artifact,limits))return 87;
+    auto densityLimit=limits;densityLimit.maximum_metadata_bytes=volumeBytes.size()-1u;
+    if(p::decode(volumeBytes,*fine->artifact,volume.identity,densityLimit))return 88;
+    auto densityless=*volumeRead;densityless.cloud.reset();
+    if(p::encode(densityless,*fine->artifact,limits)!=p::encode(fine->metadata,*fine->artifact,limits))return 89;
     const auto encoded=p::encode(fine->metadata,*fine->artifact,limits);
     if(encoded.empty()||!p::decode(encoded,*fine->artifact,fine->metadata.identity,limits))return 2;
     auto bad=encoded;bad.back()^=std::byte{1};if(p::decode(bad,*fine->artifact,fine->metadata.identity,limits))return 3;

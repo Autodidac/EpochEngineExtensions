@@ -62,6 +62,7 @@
       "tests/planet.exploration_consumer.cpp",
       "tests/planet.runtime_controller_consumer.cpp",
       "tests/planet.clouds_consumer.cpp",
+      "tests/planet.cloud_density_transport.py",
       "tests/planet.size_consumer.cpp",
       "tests/planet.size_export_contract.py",
       "tools/planet.mesh_export.cpp",
