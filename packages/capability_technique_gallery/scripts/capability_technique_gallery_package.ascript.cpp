@@ -52,7 +52,7 @@ namespace
         "capability_technique_gallery",
         "1",
         "cache/packages/capability_technique_gallery",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/capability_technique_gallery",
         false,
         true,

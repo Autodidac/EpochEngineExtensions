@@ -27,6 +27,9 @@ int main()
             require(density&&epochengine::asset::cloud_volume::valid(*density,body.radius),
                 "bounded metric cloud recipe is missing");
             require(clouds::density_recipe(body)==density,"cloud recipe is nondeterministic");
+            require(density->base_altitude_meters>body.height_scale*0.35
+                &&density->base_altitude_meters+density->thickness_meters<body.atmosphere_height,
+                "cloud deck does not clear ordinary terrain within its atmosphere");
             require(!clouds::density_recipe(world.body(5u))&&!clouds::density_recipe(world.body(4u)),
                 "airless moon/gas body gained unsupported density");
             const auto first=clouds::build(body),second=clouds::build(body);

@@ -21,7 +21,7 @@ namespace
         "engine_authoritative_dedicated_server",
         "1",
         "cache/packages/engine_authoritative_dedicated_server",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/engine_authoritative_dedicated_server",
         true,
         true,

@@ -39,8 +39,10 @@ export namespace epoch::extensions::planetary_terrain::clouds
         if(!supports(body))return {};
         epochengine::asset::cloud_volume::Recipe value{
             .seed=body.seed^0xc10d5u,
-            .base_altitude_meters=(std::max)(1.0,body.height_scale*0.15),
-            .thickness_meters=(std::max)(1.0,body.height_scale*0.12),
+            // Keep ordinary hills below the deck rather than immersing most
+            // landings in cloud. Tall authored peaks may still enter a cloud.
+            .base_altitude_meters=(std::max)(1.0,body.height_scale*0.40),
+            .thickness_meters=(std::max)(1.0,body.height_scale*0.16),
             .horizontal_scale_meters=(std::max)(10.0,body.radius*0.002),
             .coverage=0.60f,.extinction_per_meter=0.0012f};
         // Preserve optical depth when a user authors a much smaller world.

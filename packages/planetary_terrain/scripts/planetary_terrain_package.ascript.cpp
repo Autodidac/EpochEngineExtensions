@@ -22,7 +22,7 @@ namespace
         "planetary_terrain",
         "1",
         "cache/packages/planetary_terrain",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/planetary_terrain",
         true,
         true,

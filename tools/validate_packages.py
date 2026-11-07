@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 
 
@@ -38,6 +39,18 @@ SCRIPTED_SOURCE_KINDS = {
 def load_json(path: pathlib.Path) -> dict:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def validate_script_repository(path: pathlib.Path, repository: str) -> list[str]:
+    # The package API fixes sourceRepo as the fourth literal in its inert plan.
+    # Check the same declaration the compiler reads, not unrelated URL strings.
+    plans = re.findall(
+        r'\bPackageScriptPlan\s+\w+\s*\{\s*"[^"\n]*"\s*,\s*"[^"\n]*"'
+        r'\s*,\s*"[^"\n]*"\s*,\s*"([^"\n]*)"\s*,',
+        path.read_text(encoding="utf-8"))
+    if len(plans) != 1 or not repository or plans[0] != repository:
+        return [f"{path}: script sourceRepo must match manifest source.repo"]
+    return []
 
 
 def validate_manifest(path: pathlib.Path) -> list[str]:
@@ -112,6 +125,10 @@ def validate_manifest(path: pathlib.Path) -> list[str]:
                 errors.append(f"{path}: script.path must point at a .ascript.cpp runner")
             elif not (path.parent / script_path).is_file():
                 errors.append(f"{path}: script.path does not exist: {script_path}")
+            else:
+                source = manifest.get("source")
+                repository = source.get("repo", "") if isinstance(source, dict) else ""
+                errors.extend(validate_script_repository(path.parent / script_path, repository))
             if script.get("humanGated") is not True:
                 errors.append(f"{path}: package scripts must be human-gated")
             if script.get("autoRunAllowed") is True:

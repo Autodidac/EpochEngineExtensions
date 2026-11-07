@@ -21,7 +21,7 @@ namespace
         "engine_client_listen_server",
         "1",
         "cache/packages/engine_client_listen_server",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/engine_client_listen_server",
         true,
         true,

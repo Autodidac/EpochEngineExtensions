@@ -22,7 +22,7 @@ namespace
         "fft_ocean",
         "1",
         "cache/packages/fft_ocean",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/fft_ocean",
         true,
         true,

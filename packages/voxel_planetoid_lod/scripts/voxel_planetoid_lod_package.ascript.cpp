@@ -22,7 +22,7 @@ namespace
         "voxel_planetoid_lod",
         "1",
         "cache/packages/voxel_planetoid_lod",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/voxel_planetoid_lod",
         true,
         true,
