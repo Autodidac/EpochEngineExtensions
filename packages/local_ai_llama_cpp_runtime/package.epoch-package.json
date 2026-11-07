@@ -15,7 +15,7 @@
     "includeByDefault": false
   },
   "source": {
-    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "repo": "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
     "path": "packages/local_ai_llama_cpp_runtime",
     "upstreamReference": "https://github.com/ggml-org/llama.cpp",
     "upstreamLicense": "MIT",

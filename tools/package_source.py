@@ -14,20 +14,27 @@ import tarfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_URL = 'https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git'
 
 
 def git(*args):
-    return subprocess.check_output(['git', '-C', str(ROOT), *args])
+    git_directory = ROOT / '.git'
+    if (not git_directory.is_dir() or git_directory.is_symlink() or
+            (hasattr(git_directory, 'is_junction') and git_directory.is_junction())):
+        raise RuntimeError('Extensions packaging requires its own physical .git directory')
+    return subprocess.check_output([
+        'git', '--git-dir', str(git_directory), '--work-tree', str(ROOT), *args])
 
 
 def committed_source():
-    if git('remote', 'get-url', 'origin').decode().strip() != 'https://github.com/Autodidac/EpochEngineExtensions.git':
+    if git('remote', 'get-url', 'origin').decode().strip() != REPOSITORY_URL:
         raise RuntimeError('Unexpected source repository')
     if git('status', '--porcelain', '--untracked-files=all').strip():
         raise RuntimeError('Commit the reviewed source before packaging')
     commit = git('rev-parse', 'HEAD').decode().strip()
     files = {}
-    with tarfile.open(fileobj=io.BytesIO(git('archive', '--format=tar', commit))) as archive:
+    with tarfile.open(fileobj=io.BytesIO(git('-c', 'core.autocrlf=false', '-c', 'core.eol=lf',
+                                            'archive', '--format=tar', commit))) as archive:
         for item in archive:
             if item.isdir():
                 continue
@@ -85,7 +92,7 @@ def package(output):
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         (output/(path.name+'.sha256')).write_text(digest+'  '+path.name+'\n', encoding='utf-8')
         assets.append(dict(name=path.name, bytes=path.stat().st_size, sha256=digest))
-    receipt = dict(repository='Autodidac/EpochEngineExtensions', commit=commit, version=version,
+    receipt = dict(repository=REPOSITORY_URL, commit=commit, version=version,
                    files=len(files), license_sha256=hashlib.sha256(files['LICENSE'][0]).hexdigest(),
                    contents='Complete committed source only; no history, binaries, models or runtime state', assets=assets)
     (output/'source-package-receipt.json').write_text(json.dumps(receipt, indent=2)+'\n', encoding='utf-8')

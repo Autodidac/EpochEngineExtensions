@@ -37,27 +37,70 @@ namespace epoch::extensions::fft_ocean
         float foam = 0.0f;
     };
 
+    enum class OceanCode : std::uint8_t
+    {
+        ready, invalid_settings, limit_exceeded, invalid_time,
+        non_finite_output, allocation_failed
+    };
+
+    struct OceanResult
+    {
+        OceanCode code{OceanCode::ready};
+        [[nodiscard]] explicit operator bool() const noexcept { return code == OceanCode::ready; }
+    };
+
+    struct OceanLimits
+    {
+        std::uint32_t maximumResolution{512};
+        std::uint64_t maximumWorkingBytes{64u * 1024u * 1024u};
+    };
+
+    // Vector payload only; allocator bookkeeping is not included. Replacement
+    // assumes an equally sized retained tile; reset checks its actual capacities.
+    struct OceanMemory
+    {
+        std::uint64_t residentBytes{}, evaluationPeakBytes{}, replacementPeakBytes{};
+    };
+    struct OceanAdmission
+    {
+        OceanCode code{OceanCode::invalid_settings};
+        OceanMemory memory{};
+        [[nodiscard]] explicit operator bool() const noexcept { return code == OceanCode::ready; }
+    };
+    [[nodiscard]] OceanAdmission admit(const OceanSettings&, OceanLimits = {}) noexcept;
+
     class OceanTile
     {
     public:
-        explicit OceanTile(OceanSettings settings = {});
+        explicit OceanTile(OceanSettings settings = {}, OceanLimits limits = {});
 
-        void reset(OceanSettings settings);
-        void evaluate(float timeSeconds);
+        // Failure retains the last complete settings/samples. Construction
+        // retains its original throwing contract because it cannot return a code.
+        OceanResult reset(OceanSettings settings, OceanLimits limits = {}) noexcept;
+        OceanResult evaluate(float timeSeconds) noexcept;
+        // Double absolute time for Water/timeline consumers. The original
+        // float entry retains its established numerical output.
+        OceanResult evaluateAbsolute(double timeSeconds) noexcept;
 
         [[nodiscard]] const OceanSettings& settings() const noexcept;
         [[nodiscard]] std::uint32_t resolution() const noexcept;
         [[nodiscard]] float tileLengthMeters() const noexcept;
         [[nodiscard]] std::span<const OceanSample> samples() const noexcept;
+        // Non-finite or unrepresentable coordinates return the neutral sample.
         [[nodiscard]] OceanSample sample(float xMeters, float zMeters) const noexcept;
 
     private:
+        struct Empty {};
+        explicit OceanTile(Empty) noexcept {}
         OceanSettings settings_{};
+        OceanLimits limits_{};
         std::vector<OceanSample> samples_{};
         std::vector<std::complex<float>> spectrum0_{};
         std::vector<std::complex<float>> frequencyDomain_{};
 
-        void rebuildSpectrum();
+        [[nodiscard]] bool rebuildSpectrum() noexcept;
+        OceanResult evaluateTime(double timeSeconds, bool legacyFloat) noexcept;
+        [[nodiscard]] std::uint64_t retainedPayloadBytes() const noexcept;
         [[nodiscard]] std::uint32_t wrappedIndex(std::int32_t x, std::int32_t z) const noexcept;
     };
 }

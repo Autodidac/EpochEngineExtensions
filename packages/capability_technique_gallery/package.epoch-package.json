@@ -14,7 +14,7 @@
     "includeByDefault": false
   },
   "source": {
-    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "repo": "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
     "path": "packages/capability_technique_gallery",
     "referenceRepo": "https://github.com/Autodidac/tiered_gfx_OpenGL_modular_context_demo",
     "provenance": "Original renderer-neutral C++23 package catalog derived from the public technique names and capability plan; no OpenGL resource, platform, shader, or asset implementation is copied."

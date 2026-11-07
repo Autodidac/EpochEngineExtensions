@@ -14,7 +14,7 @@
     "includeByDefault": false
   },
   "source": {
-    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "repo": "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
     "path": "packages/fft_ocean",
     "provenance": "initial renderer-neutral C++23 FFT ocean source staged in this package"
   },
@@ -40,6 +40,7 @@
       "CMakeLists.txt",
       "include/epoch/extensions/fft_ocean/fft_ocean.hpp",
       "src/fft_ocean.cpp",
+      "modules/water.fft.ixx",
       "tests/fft_ocean_self_test.cpp"
     ],
     "targets": [

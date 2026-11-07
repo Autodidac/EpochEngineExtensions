@@ -14,7 +14,7 @@
     "includeByDefault": false
   },
   "source": {
-    "repo": "https://github.com/Autodidac/EpochEngineExtensions",
+    "repo": "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
     "path": "packages/engine_client_listen_server",
     "provenance": "human-gated C++23 listen-server planning source staged in this package"
   },

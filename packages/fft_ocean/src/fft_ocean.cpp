@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <limits>
+#include <new>
 #include <numbers>
 #include <stdexcept>
 
@@ -138,28 +140,90 @@ namespace epoch::extensions::fft_ocean
         }
     }
 
-    OceanTile::OceanTile(OceanSettings settings)
+    OceanAdmission admit(const OceanSettings& settings, const OceanLimits limits) noexcept
     {
-        reset(settings);
-    }
-
-    void OceanTile::reset(OceanSettings settings)
-    {
+        constexpr std::uint64_t absoluteBytes = 64u * 1024u * 1024u;
+        if (!is_power_of_two(limits.maximumResolution) || limits.maximumResolution < 8u ||
+            limits.maximumResolution > 512u || limits.maximumWorkingBytes == 0u ||
+            limits.maximumWorkingBytes > absoluteBytes)
+            return {OceanCode::limit_exceeded};
         if (!is_power_of_two(settings.resolution) || settings.resolution < 8u)
-            throw std::invalid_argument("fft_ocean resolution must be a power of two and at least 8");
-        if (settings.tileLengthMeters <= 0.0f)
-            throw std::invalid_argument("fft_ocean tile length must be positive");
-
-        settings_ = settings;
-        const std::size_t sampleCount = static_cast<std::size_t>(settings_.resolution) * settings_.resolution;
-        samples_.assign(sampleCount, {});
-        spectrum0_.assign(sampleCount, {});
-        frequencyDomain_.assign(sampleCount, {});
-        rebuildSpectrum();
-        evaluate(0.0f);
+            return {OceanCode::invalid_settings};
+        if (settings.resolution > limits.maximumResolution)
+            return {OceanCode::limit_exceeded};
+        for (const float value : {settings.tileLengthMeters, settings.windSpeedMetersPerSecond,
+            settings.windDirectionRadians, settings.amplitude, settings.choppiness,
+            settings.normalStrength, settings.foamSlopeThreshold, settings.gravity})
+            if (!std::isfinite(value)) return {OceanCode::invalid_settings};
+        if (settings.tileLengthMeters <= 0.0f || settings.windSpeedMetersPerSecond < 0.0f ||
+            settings.amplitude < 0.0f || settings.choppiness < 0.0f ||
+            settings.normalStrength <= 0.0f || settings.foamSlopeThreshold < 0.0f || settings.gravity <= 0.0f)
+            return {OceanCode::invalid_settings};
+        const float maximumK = kTwoPi * static_cast<float>(settings.resolution / 2u) / settings.tileLengthMeters;
+        const float k2 = maximumK * maximumK * 2.0f;
+        const float windLength = settings.windSpeedMetersPerSecond * settings.windSpeedMetersPerSecond / settings.gravity;
+        const float damping = windLength * 0.001f;
+        if (!std::isfinite(k2 * k2) || !std::isfinite(settings.gravity * std::sqrt(k2)) ||
+            !std::isfinite(damping * damping) || !std::isfinite(windLength) ||
+            !std::isfinite(settings.normalStrength * settings.normalStrength) ||
+            settings.normalStrength * settings.normalStrength == 0.0f ||
+            settings.tileLengthMeters / settings.resolution == 0.0f)
+            return {OceanCode::invalid_settings};
+        const std::uint64_t count = std::uint64_t(settings.resolution) * settings.resolution;
+        OceanMemory memory;
+        memory.residentBytes = count * (sizeof(OceanSample) + 2u * sizeof(Complex));
+        const auto temporary = count * (sizeof(OceanSample) + sizeof(Complex)) +
+            std::uint64_t(settings.resolution) * sizeof(Complex);
+        memory.evaluationPeakBytes = memory.residentBytes + temporary;
+        memory.replacementPeakBytes = memory.residentBytes + memory.evaluationPeakBytes;
+        if (memory.evaluationPeakBytes > limits.maximumWorkingBytes)
+            return {OceanCode::limit_exceeded, memory};
+        return {OceanCode::ready, memory};
     }
 
-    void OceanTile::rebuildSpectrum()
+    OceanTile::OceanTile(OceanSettings settings, OceanLimits limits)
+    {
+        const auto result = reset(settings, limits);
+        if (result) return;
+        if (result.code == OceanCode::allocation_failed) throw std::bad_alloc{};
+        throw std::invalid_argument("fft_ocean construction refused invalid or over-budget settings");
+    }
+
+    std::uint64_t OceanTile::retainedPayloadBytes() const noexcept
+    {
+        return std::uint64_t(samples_.capacity()) * sizeof(OceanSample) +
+            (std::uint64_t(spectrum0_.capacity()) + frequencyDomain_.capacity()) * sizeof(Complex);
+    }
+
+    OceanResult OceanTile::reset(OceanSettings settings, OceanLimits limits) noexcept
+    {
+        const auto admission = admit(settings, limits);
+        if (!admission) return {admission.code};
+        if (retainedPayloadBytes() > limits.maximumWorkingBytes - admission.memory.evaluationPeakBytes)
+            return {OceanCode::limit_exceeded};
+        try
+        {
+            OceanTile replacement{Empty{}};
+            replacement.settings_ = settings;
+            replacement.limits_ = limits;
+            const std::size_t count = std::size_t(settings.resolution) * settings.resolution;
+            replacement.samples_.resize(count);
+            replacement.spectrum0_.resize(count);
+            replacement.frequencyDomain_.resize(count);
+            if (!replacement.rebuildSpectrum()) return {OceanCode::non_finite_output};
+            const auto evaluated = replacement.evaluate(0.0f);
+            if (!evaluated) return evaluated;
+            settings_ = settings;
+            limits_ = limits;
+            samples_.swap(replacement.samples_);
+            spectrum0_.swap(replacement.spectrum0_);
+            frequencyDomain_.swap(replacement.frequencyDomain_);
+            return {};
+        }
+        catch (...) { return {OceanCode::allocation_failed}; }
+    }
+
+    bool OceanTile::rebuildSpectrum() noexcept
     {
         std::uint32_t randomState = settings_.seed;
         const float length = settings_.tileLengthMeters;
@@ -174,79 +238,130 @@ namespace epoch::extensions::fft_ocean
             {
                 const std::int32_t shiftedX = x < resolution / 2 ? x : x - resolution;
                 const float kx = kTwoPi * static_cast<float>(shiftedX) / length;
-                spectrum0_[static_cast<std::size_t>(z) * settings_.resolution + static_cast<std::size_t>(x)] =
-                    initial_spectrum_value(settings_, kx, kz, randomState);
+                const auto value = initial_spectrum_value(settings_, kx, kz, randomState);
+                if (!std::isfinite(value.real()) || !std::isfinite(value.imag())) return false;
+                spectrum0_[static_cast<std::size_t>(z) * settings_.resolution + static_cast<std::size_t>(x)] = value;
             }
         }
+        return true;
     }
 
-    void OceanTile::evaluate(const float timeSeconds)
+    OceanResult OceanTile::evaluate(const float timeSeconds) noexcept
     {
-        const std::uint32_t n = settings_.resolution;
-        const float length = settings_.tileLengthMeters;
+        return evaluateTime(timeSeconds,true);
+    }
 
-        for (std::uint32_t z = 0u; z < n; ++z)
+    OceanResult OceanTile::evaluateAbsolute(const double timeSeconds) noexcept
+    {
+        return evaluateTime(timeSeconds,false);
+    }
+
+    OceanResult OceanTile::evaluateTime(const double timeSeconds,const bool legacyFloat) noexcept
+    {
+        if (!std::isfinite(timeSeconds)) return {OceanCode::invalid_time};
+        const auto admission = admit(settings_, limits_);
+        if (!admission) return {admission.code};
+        const auto count = std::size_t(settings_.resolution) * settings_.resolution;
+        if (samples_.size() != count || spectrum0_.size() != count || frequencyDomain_.size() != count)
+            return {OceanCode::invalid_settings};
+        const auto temporary = admission.memory.evaluationPeakBytes - admission.memory.residentBytes;
+        if (retainedPayloadBytes() > limits_.maximumWorkingBytes - temporary)
+            return {OceanCode::limit_exceeded};
+        const float maximumK = kTwoPi * static_cast<float>(settings_.resolution / 2u) / settings_.tileLengthMeters;
+        const float maximumOmega = std::sqrt(settings_.gravity * std::sqrt(maximumK * maximumK * 2.0f));
+        if (!std::isfinite(maximumOmega * timeSeconds)
+            ||(legacyFloat&&!std::isfinite(maximumOmega*static_cast<float>(timeSeconds))))
+            return {OceanCode::invalid_time};
+        try
         {
-            const std::int32_t shiftedZ = z < n / 2u ? static_cast<std::int32_t>(z) : static_cast<std::int32_t>(z) - static_cast<std::int32_t>(n);
-            const float kz = kTwoPi * static_cast<float>(shiftedZ) / length;
+            const std::uint32_t n = settings_.resolution;
+            const float length = settings_.tileLengthMeters;
+            std::vector<OceanSample> nextSamples(samples_.size());
 
-            for (std::uint32_t x = 0u; x < n; ++x)
+            for (std::uint32_t z = 0u; z < n; ++z)
             {
-                const std::int32_t shiftedX = x < n / 2u ? static_cast<std::int32_t>(x) : static_cast<std::int32_t>(x) - static_cast<std::int32_t>(n);
-                const float kx = kTwoPi * static_cast<float>(shiftedX) / length;
-                const float k = std::sqrt(kx * kx + kz * kz);
-                const float omega = std::sqrt(settings_.gravity * k);
-                const Complex phase{ std::cos(omega * timeSeconds), std::sin(omega * timeSeconds) };
+                const std::int32_t shiftedZ = z < n / 2u ? static_cast<std::int32_t>(z) : static_cast<std::int32_t>(z) - static_cast<std::int32_t>(n);
+                const float kz = kTwoPi * static_cast<float>(shiftedZ) / length;
 
-                const std::uint32_t oppositeX = (n - x) & (n - 1u);
-                const std::uint32_t oppositeZ = (n - z) & (n - 1u);
-                const Complex h0 = spectrum0_[z * n + x];
-                const Complex h0Opposite = std::conj(spectrum0_[oppositeZ * n + oppositeX]);
-                frequencyDomain_[z * n + x] = h0 * phase + h0Opposite * std::conj(phase);
+                for (std::uint32_t x = 0u; x < n; ++x)
+                {
+                    const std::int32_t shiftedX = x < n / 2u ? static_cast<std::int32_t>(x) : static_cast<std::int32_t>(x) - static_cast<std::int32_t>(n);
+                    const float kx = kTwoPi * static_cast<float>(shiftedX) / length;
+                    const float k = std::sqrt(kx * kx + kz * kz);
+                    const float omega = std::sqrt(settings_.gravity * k);
+                    const double angle = legacyFloat?double(omega*static_cast<float>(timeSeconds))
+                        :double(omega)*timeSeconds;
+                    if (!std::isfinite(angle)) return {OceanCode::invalid_time};
+                    const Complex phase = legacyFloat
+                        ?Complex{std::cos(static_cast<float>(angle)),std::sin(static_cast<float>(angle))}
+                        :Complex{static_cast<float>(std::cos(angle)),static_cast<float>(std::sin(angle))};
+
+                    const std::uint32_t oppositeX = (n - x) & (n - 1u);
+                    const std::uint32_t oppositeZ = (n - z) & (n - 1u);
+                    const Complex h0 = spectrum0_[z * n + x];
+                    const Complex h0Opposite = std::conj(spectrum0_[oppositeZ * n + oppositeX]);
+                    frequencyDomain_[z * n + x] = h0 * phase + h0Opposite * std::conj(phase);
+                }
             }
-        }
 
-        std::vector<Complex> spatial(frequencyDomain_.size());
-        for (std::size_t index = 0; index < frequencyDomain_.size(); ++index)
-            spatial[index] = frequencyDomain_[index];
-        inverse_fft_2d(spatial, n);
+            std::vector<Complex> spatial(frequencyDomain_.size());
+            for (std::size_t index = 0; index < frequencyDomain_.size(); ++index)
+                spatial[index] = frequencyDomain_[index];
+            inverse_fft_2d(spatial, n);
 
-        for (std::uint32_t z = 0u; z < n; ++z)
-        {
-            for (std::uint32_t x = 0u; x < n; ++x)
+            // Phillips is a continuous spectral density. Each discrete mode
+            // represents a frequency cell of area deltaK squared, so its
+            // amplitude carries deltaK. Our inverse FFT divides by N twice;
+            // cancel that numerical normalization when producing metres.
+            // Without this factor, increasing resolution makes the sea flatter
+            // and the default 18 m/s ocean produces centimetre-scale waves.
+            const float spectrumToMeters = static_cast<float>(n) * static_cast<float>(n) * kTwoPi / length;
+
+            for (std::uint32_t z = 0u; z < n; ++z)
             {
-                const float u = static_cast<float>(x) / static_cast<float>(n);
-                const float v = static_cast<float>(z) / static_cast<float>(n);
-                OceanSample& out = samples_[z * n + x];
-                out.xMeters = (u - 0.5f) * length;
-                out.zMeters = (v - 0.5f) * length;
-                out.heightMeters = spatial[z * n + x].real();
+                for (std::uint32_t x = 0u; x < n; ++x)
+                {
+                    const float u = static_cast<float>(x) / static_cast<float>(n);
+                    const float v = static_cast<float>(z) / static_cast<float>(n);
+                    OceanSample& out = nextSamples[z * n + x];
+                    out.xMeters = (u - 0.5f) * length;
+                    out.zMeters = (v - 0.5f) * length;
+                    out.heightMeters = spatial[z * n + x].real() * spectrumToMeters;
+                }
             }
-        }
 
-        const float cellSize = length / static_cast<float>(n);
-        for (std::uint32_t z = 0u; z < n; ++z)
-        {
-            for (std::uint32_t x = 0u; x < n; ++x)
+            const float cellSize = length / static_cast<float>(n);
+            for (std::uint32_t z = 0u; z < n; ++z)
             {
-                OceanSample& out = samples_[z * n + x];
-                const float hL = samples_[wrappedIndex(static_cast<std::int32_t>(x) - 1, static_cast<std::int32_t>(z))].heightMeters;
-                const float hR = samples_[wrappedIndex(static_cast<std::int32_t>(x) + 1, static_cast<std::int32_t>(z))].heightMeters;
-                const float hD = samples_[wrappedIndex(static_cast<std::int32_t>(x), static_cast<std::int32_t>(z) - 1)].heightMeters;
-                const float hU = samples_[wrappedIndex(static_cast<std::int32_t>(x), static_cast<std::int32_t>(z) + 1)].heightMeters;
+                for (std::uint32_t x = 0u; x < n; ++x)
+                {
+                    OceanSample& out = nextSamples[z * n + x];
+                    const float hL = nextSamples[wrappedIndex(static_cast<std::int32_t>(x) - 1, static_cast<std::int32_t>(z))].heightMeters;
+                    const float hR = nextSamples[wrappedIndex(static_cast<std::int32_t>(x) + 1, static_cast<std::int32_t>(z))].heightMeters;
+                    const float hD = nextSamples[wrappedIndex(static_cast<std::int32_t>(x), static_cast<std::int32_t>(z) - 1)].heightMeters;
+                    const float hU = nextSamples[wrappedIndex(static_cast<std::int32_t>(x), static_cast<std::int32_t>(z) + 1)].heightMeters;
 
-                const float slopeX = (hR - hL) / (2.0f * cellSize);
-                const float slopeZ = (hU - hD) / (2.0f * cellSize);
-                const float invLength = 1.0f / std::sqrt(slopeX * slopeX + settings_.normalStrength * settings_.normalStrength + slopeZ * slopeZ);
+                    const float slopeX = (hR - hL) / (2.0f * cellSize);
+                    const float slopeZ = (hU - hD) / (2.0f * cellSize);
+                    const float invLength = 1.0f / std::sqrt(slopeX * slopeX + settings_.normalStrength * settings_.normalStrength + slopeZ * slopeZ);
+                    if (!std::isfinite(invLength) || invLength <= 0.0f)
+                        return {OceanCode::non_finite_output};
 
-                out.displacementXMeters = -slopeX * settings_.choppiness;
-                out.displacementZMeters = -slopeZ * settings_.choppiness;
-                out.normalX = -slopeX * invLength;
-                out.normalY = settings_.normalStrength * invLength;
-                out.normalZ = -slopeZ * invLength;
-                out.foam = clamp01((std::sqrt(slopeX * slopeX + slopeZ * slopeZ) - settings_.foamSlopeThreshold) * 4.0f);
+                    out.displacementXMeters = -slopeX * settings_.choppiness;
+                    out.displacementZMeters = -slopeZ * settings_.choppiness;
+                    out.normalX = -slopeX * invLength;
+                    out.normalY = settings_.normalStrength * invLength;
+                    out.normalZ = -slopeZ * invLength;
+                    out.foam = clamp01((std::sqrt(slopeX * slopeX + slopeZ * slopeZ) - settings_.foamSlopeThreshold) * 4.0f);
+                    for (const float value : {out.heightMeters, out.displacementXMeters, out.displacementZMeters,
+                        out.normalX, out.normalY, out.normalZ, out.foam})
+                        if (!std::isfinite(value)) return {OceanCode::non_finite_output};
+                }
             }
+            samples_.swap(nextSamples);
+            return {};
         }
+        catch (...) { return {OceanCode::allocation_failed}; }
     }
 
     const OceanSettings& OceanTile::settings() const noexcept
@@ -271,9 +386,15 @@ namespace epoch::extensions::fft_ocean
 
     OceanSample OceanTile::sample(const float xMeters, const float zMeters) const noexcept
     {
+        if (samples_.size() != std::size_t(settings_.resolution) * settings_.resolution) return {};
         const float n = static_cast<float>(settings_.resolution);
         const float u = (xMeters / settings_.tileLengthMeters + 0.5f) * n;
         const float v = (zMeters / settings_.tileLengthMeters + 0.5f) * n;
+        if (!std::isfinite(u) || !std::isfinite(v) ||
+            double(std::floor(u)) < double((std::numeric_limits<std::int32_t>::min)()) ||
+            double(std::floor(v)) < double((std::numeric_limits<std::int32_t>::min)()) ||
+            double(std::floor(u)) >= double((std::numeric_limits<std::int32_t>::max)()) ||
+            double(std::floor(v)) >= double((std::numeric_limits<std::int32_t>::max)())) return {};
         const auto x0 = static_cast<std::int32_t>(std::floor(u));
         const auto z0 = static_cast<std::int32_t>(std::floor(v));
         const float tx = u - std::floor(u);

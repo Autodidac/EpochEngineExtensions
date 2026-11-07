@@ -11,3 +11,4 @@ if (-not (Test-Path $Script)) {
 }
 
 python $Script
+exit $LASTEXITCODE
