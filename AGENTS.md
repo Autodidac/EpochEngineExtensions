@@ -3,10 +3,13 @@
 <!-- SPDX-License-Identifier: LicenseRef-MIT-NoSell -->
 <!-- Copyright (c) 2026 Adam Rushford -->
 
-- This repository is the optional package source home for EpochEngine.
-- Do not copy package source into EpochEngine mainline unless a reviewed subset
-  has a stable engine API boundary, provenance, build evidence, and a promotion
-  note in the EpochEngine roadmap.
+- Optional package source starts in EpochEngine at
+  `Engine/dep/EpochEngineExtensions`. This separate Site project mirrors that
+  reviewed source and has its own commits, version and source packages. Do not
+  create another permanent `Extensions/` source owner or move it into user Projects.
+- Keeping source in the Engine repository does not compile, activate or ship a
+  package with every application. Engine interfaces stay engine-owned; optional
+  implementations use the existing Package Manager and exact source admission.
 - Keep package manifests under `packages/<package-id>/package.epoch-package.json`.
 - Keep package source inert by default. No package may auto-bind ports, create
   listeners, start hidden services, or expose hidden control surfaces.
@@ -23,9 +26,14 @@
 - Server/network packages may remain manifest-driven until their reviewed
   engine API exists; they must not add C++ runners that auto-bind ports or
   launch listeners.
-- Forest Factory is a core EpochEngine feature, but heavy forest demos,
-  datasets, or external L-system experiments may live here as optional package
-  material.
+- Plant Lab and Forest Factory are optional package tracks. Engine retains generic
+  authoring, voxel-field and project-persistence contracts. Existing forest
+  implementation still compiled into Engine is unfinished extraction work; do
+  not claim it has moved here without its real source and independent consumer.
+- The pinned Public Engine 0.90.183 CI lane checks the default independent CPU
+  targets only. The optional cloud-density exporter/controller requires the new
+  0.90.185 artifact contracts and its separate current-source acceptance. Do not
+  report the older CI lane as proof of that feature or of native rendering.
 - Do not use legacy project naming in package IDs, filenames, manifests, docs,
   or script strings. Extension packages must use Epoch naming and describe code
   capabilities, not unrelated data artifacts.

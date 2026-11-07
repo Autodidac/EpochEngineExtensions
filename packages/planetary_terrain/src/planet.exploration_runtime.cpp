@@ -19,6 +19,7 @@ import planet.exploration;
 import planet.terrain;
 import planet.coverage;
 import planet.clouds;
+import asset.cloud_volume;
 import asset.mesh_artifact;
 #if defined(EPOCH_PLANET_HAS_WATER_EXTENSION)
 import water.fft;
@@ -79,7 +80,7 @@ namespace epoch::extensions::planetary_terrain::exploration_runtime
             host::Binding binding_;
             exploration::Simulation simulation_;
             std::array<std::shared_ptr<const mesh::Artifact>,6> meshes_{};
-            std::array<std::shared_ptr<const mesh::Artifact>,6> clouds_{};
+            std::array<std::optional<epochengine::asset::cloud_volume::Recipe>,6> clouds_{};
             bool cloud_layers_ready_{true};
             double accumulator_{},last_nonzero_scale_{1.0};
             std::shared_ptr<epochengine::water::wave::Provider> water_{};
@@ -100,7 +101,7 @@ namespace epoch::extensions::planetary_terrain::exploration_runtime
                     if(binding.universe||index==binding.initial_body)
                     {
                         meshes_[index]=coarse_body(binding.seed,index,binding.ocean_surface,simulation_.world().config());
-                        clouds_[index]=clouds::build(simulation_.world().body(index));
+                        clouds_[index]=clouds::density_recipe(simulation_.world().body(index));
                         if(clouds::supports(simulation_.world().body(index))&&!clouds_[index])cloud_layers_ready_=false;
                     }
             }
@@ -131,7 +132,7 @@ namespace epoch::extensions::planetary_terrain::exploration_runtime
                     const auto& body=simulation_.world().body(index);
                     frame.bodies[frame.body_count++]={body.id,binding_.universe?body.parent:-1,std::string{body.name},
                         vector(simulation_.world().center(index,frame.seconds)),body.radius,
-                        body.kind!=core::BodyKind::gas,meshes_[index],clouds_[index],clouds::wind_degrees(frame.seconds)};
+                        body.kind!=core::BodyKind::gas,meshes_[index],{},clouds::wind_degrees(frame.seconds),clouds_[index]};
                 }
                 frame.valid=true;
                 return host::valid_frame(frame)?host::Result{host::Code::ready,std::move(frame)}

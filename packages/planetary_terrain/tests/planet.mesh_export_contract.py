@@ -9,6 +9,104 @@ import subprocess
 import tempfile
 
 
+def verify_ocean_vertices(dry_bytes, wet_bytes, recipe):
+    """Separate sea samples, sealing skirts and clipped shoreline vertices.
+
+    The producer retains each dry terrain block, appends its matching water
+    grid/skirt, then appends shoreline crossings. Clipped crossings belong on
+    rendered triangle edges/ground planes, not on an ideal radius-ten sphere.
+    See water.planetary_shoreline_consumer.cpp for the shared owner's additional
+    time/parent-morph checks against those same geometric relationships.
+    """
+    patches = recipe['patches']
+    assert recipe['mode'] == 'planet' and len(patches) == 6
+    dry_count, dry_index_count = struct.unpack_from('<II', dry_bytes, 40)
+    wet_count, wet_index_count = struct.unpack_from('<II', wet_bytes, 40)
+    grid = (recipe['cells_per_tile'] + 1) ** 2
+    layer, remainder = divmod(dry_count, len(patches))
+    assert remainder == 0 and layer in (grid, grid + 4 * recipe['cells_per_tile']), 'Unexpected source grid/skirt topology'
+    raw = wet_bytes[48:48 + wet_count * 44]
+    bases = []
+    for patch in range(len(patches)):
+        start = 48 + patch * layer * 44
+        terrain = dry_bytes[start:start + layer * 44]
+        offset = raw.find(terrain)
+        assert offset >= 0 and offset % 44 == 0, 'Ocean changed its input terrain'
+        assert raw.find(terrain, offset + 1) == -1, 'Ambiguous terrain block'
+        bases.append(offset // 44)
+    assert bases == sorted(bases) and bases[0] == 0
+    bases.append(wet_count)
+    dry_indices = struct.unpack_from(f'<{dry_index_count}I', dry_bytes, 48 + dry_count * 44)
+    wet_indices = struct.unpack_from(f'<{wet_index_count}I', wet_bytes, 48 + wet_count * 44)
+    positions = [struct.unpack_from('<fff', wet_bytes, 48 + i * 44) for i in range(wet_count)]
+    normals = [struct.unpack_from('<fff', wet_bytes, 60 + i * 44) for i in range(wet_count)]
+    def sub(a, b):
+        return tuple(x - y for x, y in zip(a, b))
+    def dot(a, b):
+        return sum(x * y for x, y in zip(a, b))
+    def cross(a, b):
+        return (a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0])
+    sea_samples = shoreline = surface_crossings = 0
+    for patch, (base, end) in enumerate(zip(bases, bases[1:])):
+        water = base + layer
+        clipped = water + layer
+        assert clipped <= end, 'Ocean lost its original water grid/skirt'
+        for i in range(water, end):
+            assert all(math.isfinite(v) for v in positions[i] + normals[i]), 'Nonfinite ocean vertex'
+            assert abs(math.sqrt(dot(normals[i], normals[i])) - 1) <= 1e-5, 'Opaque ocean normal is invalid'
+            color = struct.unpack_from('<fff', wet_bytes, 48 + i * 44 + 32)
+            assert max(abs(a - b) for a, b in zip(color, (0.015, 0.085, 0.12))) < 1e-7
+        for i in range(water, water + grid):
+            assert abs(math.sqrt(dot(positions[i], positions[i])) - 10) <= 1e-5, 'Original sea sample left sea level'
+            sea_samples += 1
+        dry_base = patch * layer
+        triangles = []
+        for t in range(0, dry_index_count, 3):
+            ids = dry_indices[t:t+3]
+            if any(dry_base <= i < dry_base + layer for i in ids):
+                assert all(dry_base <= i < dry_base + layer for i in ids), 'Source crosses patch ranges'
+                triangles.append(tuple(i - dry_base for i in ids))
+        assert triangles, 'Source contains no ground triangles'
+        edges = []
+        for ids in triangles:
+            surface = all(i < grid for i in ids)
+            origin = positions[base + ids[0]]
+            normal = cross(sub(positions[base + ids[1]], origin), sub(positions[base + ids[2]], origin))
+            length = math.sqrt(dot(normal, normal))
+            assert length > 0
+            for a, b in zip(ids, ids[1:] + ids[:1]):
+                av, bv = positions[water + a], positions[water + b]
+                direction = sub(bv, av)
+                denominator = dot(direction, direction)
+                if denominator > 0:
+                    edges.append((av, direction, denominator, surface, origin, normal, length))
+        for i in range(clipped, end):
+            q = positions[i]
+            matches = []
+            for av, direction, denominator, surface, origin, normal, length in edges:
+                delta = sub(q, av)
+                fraction = dot(delta, direction) / denominator
+                if not -1e-5 <= fraction <= 1 + 1e-5:
+                    continue
+                residual = tuple(delta[axis] - fraction * direction[axis] for axis in range(3))
+                # Same float-artifact bounds as the existing C++ shoreline contract.
+                if dot(residual, residual) > 4e-12:
+                    continue
+                matches.append((surface, abs(dot(normal, sub(q, origin))) / length))
+            assert matches, 'Shoreline vertex left every original water edge'
+            surface_errors = [error for surface, error in matches if surface]
+            if surface_errors:
+                assert min(surface_errors) <= 2e-6, 'Surface shoreline misses the rendered ground plane'
+                surface_crossings += 1
+            shoreline += 1
+        for t in range(0, wet_index_count, 3):
+            ids = wet_indices[t:t+3]
+            if any(base <= i < end for i in ids):
+                assert all(base <= i < end for i in ids), 'Ocean crosses patch ranges'
+    assert sea_samples and shoreline and surface_crossings, 'Fixture did not exercise sea samples and clipped shores'
+    return {'sea_samples': sea_samples, 'shoreline_vertices': shoreline, 'surface_crossings': surface_crossings}
+
+
 def verify_body_inventory(output):
     """Ranges must describe the final artifact, including clipped water."""
     data = (output / 'terrain.epoch_mesh').read_bytes()
@@ -108,19 +206,32 @@ def main():
                                   '--reference-radius-meters', '1737000'], capture_output=True, timeout=30)
             assert run.returncode == 0, (mode, run.returncode)
             verify_body_inventory(output)
-        water = 0
-        for index in range(wet_recipe['vertices']):
-            color = struct.unpack_from('<fff', wet_bytes, 48 + index * 44 + 32)
-            if max(abs(a - b) for a, b in zip(color, (0.015, 0.085, 0.12))) < 1e-7:
-                position = struct.unpack_from('<fff', wet_bytes, 48 + index * 44)
-                normal = struct.unpack_from('<fff', wet_bytes, 48 + index * 44 + 12)
-                if abs(math.sqrt(sum(x*x for x in position)) - 10) > 1e-5:
-                    raise AssertionError('Opaque ocean surface is not at the body sea-level radius')
-                if abs(math.sqrt(sum(x*x for x in normal)) - 1) > 1e-5:
-                    raise AssertionError('Opaque ocean normal is invalid')
-                water += 1
-        if not water:
-            raise AssertionError('Artifact contains no actual blue ocean vertices')
+        verify_ocean_vertices(dry_planet, wet_bytes, wet_recipe)
+        # The clipping check must reject geometry corruption, including the old
+        # spherical "fix" that passes a radius-only check but tears the coast.
+        sea = (struct.unpack_from('<II', dry_planet, 40)[0]
+               // len(wet_recipe['patches']))
+        shore = 2 * sea
+        original_sea = struct.unpack_from('<fff', wet_bytes, 48 + sea * 44)
+        original_shore = struct.unpack_from('<fff', wet_bytes, 48 + shore * 44)
+        shore_radius = math.sqrt(sum(value * value for value in original_shore))
+        corruptions = (
+            ('sea radius', sea, 0, tuple(value * 1.001 for value in original_sea)),
+            ('sea normal', sea, 12, (0., 0., 0.)),
+            ('nonfinite sea', sea, 0, (math.nan, original_sea[1], original_sea[2])),
+            ('shore offset', shore, 0, (original_shore[0] + .01,
+                                       original_shore[1] + .02, original_shore[2] - .01)),
+            ('spherical shore projection', shore, 0,
+             tuple(value * 10 / shore_radius for value in original_shore)),
+        )
+        for label, index, field, values in corruptions:
+            corrupted = bytearray(wet_bytes)
+            struct.pack_into('<fff', corrupted, 48 + index * 44 + field, *values)
+            try:
+                verify_ocean_vertices(dry_planet, corrupted, wet_recipe)
+            except AssertionError:
+                continue
+            raise AssertionError(f'Ocean geometry check accepted {label} corruption')
         flat = Path(scratch) / 'unsupported-flat-ocean'
         invalid = subprocess.run([str(args.producer), 'classic', str(flat), '73', '4', '1', '0', '128', '1'],
                                  capture_output=True, timeout=10)

@@ -87,7 +87,7 @@ set(EPOCH_PLANET_WATER_SOURCE_ROOT "" CACHE PATH "Exact admitted FFT source; no 
 set(EPOCH_ENGINE_SOURCE_ROOT "" CACHE PATH "Explicit Engine source for the optional artifact consumer")
 if((EPOCH_PLANET_BUILD_MESH_EXPORT OR EPOCH_PLANET_BUILD_RUNTIME_CONTROLLER) AND NOT TARGET epoch)
     foreach(_epoch_mesh_owner IN ITEMS
-        modules/asset.texture_artifact.ixx modules/asset.mesh_artifact.ixx
+        modules/asset.texture_artifact.ixx modules/asset.mesh_artifact.ixx modules/asset.cloud_volume.ixx
         src/assets/texture/asset.texture_artifact.cpp modules/project.planetary_snapshot.ixx
         src/project/project.planetary_snapshot.cpp)
         if(NOT EXISTS "${EPOCH_ENGINE_SOURCE_ROOT}/Engine/${_epoch_mesh_owner}")
@@ -101,6 +101,7 @@ if((EPOCH_PLANET_BUILD_MESH_EXPORT OR EPOCH_PLANET_BUILD_RUNTIME_CONTROLLER) AND
         BASE_DIRS "${EPOCH_ENGINE_SOURCE_ROOT}/Engine/modules"
         FILES "${EPOCH_ENGINE_SOURCE_ROOT}/Engine/modules/asset.texture_artifact.ixx"
               "${EPOCH_ENGINE_SOURCE_ROOT}/Engine/modules/asset.mesh_artifact.ixx"
+              "${EPOCH_ENGINE_SOURCE_ROOT}/Engine/modules/asset.cloud_volume.ixx"
               "${EPOCH_ENGINE_SOURCE_ROOT}/Engine/modules/project.planetary_snapshot.ixx")
     target_compile_features(epoch_planet_mesh_format PUBLIC cxx_std_23)
     target_include_directories(epoch_planet_mesh_format PUBLIC "${EPOCH_ENGINE_SOURCE_ROOT}/Engine/include")
@@ -122,7 +123,7 @@ if((EPOCH_PLANET_BUILD_MESH_EXPORT OR EPOCH_PLANET_BUILD_RUNTIME_CONTROLLER) AND
         # limit in an ordinary deeply nested project. Keep every compiler
         # output in the existing target/configuration-owned IntDir instead.
         foreach(_epoch_mesh_owner IN ITEMS
-            modules/asset.texture_artifact.ixx modules/asset.mesh_artifact.ixx
+            modules/asset.texture_artifact.ixx modules/asset.mesh_artifact.ixx modules/asset.cloud_volume.ixx
             src/assets/texture/asset.texture_artifact.cpp modules/project.planetary_snapshot.ixx
             src/project/project.planetary_snapshot.cpp)
             get_filename_component(_epoch_mesh_name "${_epoch_mesh_owner}" NAME)
@@ -203,6 +204,13 @@ if(EPOCH_PLANET_BUILD_MESH_EXPORT)
             add_executable(epoch_planet_water_time_contract tests/planet.water_time_consumer.cpp)
             target_link_libraries(epoch_planet_water_time_contract PRIVATE epoch_extension_planetary_water)
             target_compile_features(epoch_planet_water_time_contract PRIVATE cxx_std_23)
+            add_executable(epoch_planet_water_shoreline_contract tests/water.planetary_shoreline_consumer.cpp)
+            target_link_libraries(epoch_planet_water_shoreline_contract PRIVATE epoch_extension_planetary_water)
+            target_compile_features(epoch_planet_water_shoreline_contract PRIVATE cxx_std_23)
+            add_test(NAME epoch_planet_water_shoreline_contract
+                COMMAND epoch_planet_water_shoreline_contract
+                    "${CMAKE_CURRENT_BINARY_DIR}/planet-water-shoreline.txt")
+            set_tests_properties(epoch_planet_water_shoreline_contract PROPERTIES TIMEOUT 30)
         endif()
         add_executable(epoch_planet_snapshot_contract tests/planet.snapshot_consumer.cpp)
         target_link_libraries(epoch_planet_snapshot_contract PRIVATE EpochEngineExtensions::PlanetaryCore)
@@ -234,6 +242,12 @@ if(EPOCH_PLANET_BUILD_MESH_EXPORT)
             COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/planet.view_export_contract.py"
                 --producer "$<TARGET_FILE:epoch_planet_mesh_export>"
                 --scratch "${CMAKE_CURRENT_BINARY_DIR}/test-scratch")
+        add_test(NAME epoch_planet_cloud_density_transport_contract
+            COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/planet.cloud_density_transport.py"
+                --producer "$<TARGET_FILE:epoch_planet_mesh_export>"
+                --consumer "$<TARGET_FILE:epoch_planet_snapshot_contract>"
+                --scratch "${CMAKE_CURRENT_BINARY_DIR}/test-scratch")
+        set_tests_properties(epoch_planet_cloud_density_transport_contract PROPERTIES TIMEOUT 90)
     endif()
 endif()
 
