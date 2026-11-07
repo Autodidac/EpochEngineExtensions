@@ -20,7 +20,7 @@ namespace
         "local_ai_llama_cpp_runtime",
         "2",
         "cache/packages/local_ai_llama_cpp_runtime",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/local_ai_llama_cpp_runtime",
         false,
         false,

@@ -18,6 +18,32 @@ OWNER = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('extensions_source_package', OWNER / 'tools/package_source.py')
 packer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(packer)
+validator_spec = importlib.util.spec_from_file_location('extensions_manifest_validator', OWNER / 'tools/validate_packages.py')
+validator = importlib.util.module_from_spec(validator_spec)
+validator_spec.loader.exec_module(validator)
+
+
+class ManifestSourceBinding(unittest.TestCase):
+    def test_actual_runner_repository_matches_manifest_and_refuses_legacy_route(self):
+        manifests = sorted((OWNER / 'packages').glob('*/package.epoch-package.json'))
+        self.assertTrue(manifests)
+        scratch = OWNER / 'build/package-owner-tests'
+        scratch.mkdir(parents=True, exist_ok=True)
+        for manifest_path in manifests:
+            manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+            script = manifest_path.parent / manifest['script']['path']
+            repository = manifest['source']['repo']
+            with self.subTest(package=manifest['id']), tempfile.TemporaryDirectory(dir=scratch) as directory:
+                self.assertEqual(validator.validate_script_repository(script, repository), [])
+                fixture = Path(directory) / script.name
+                fixture.write_text(script.read_text(encoding='utf-8').replace(
+                    repository, 'https://github.com/Autodidac/EpochEngineExtensions'), encoding='utf-8')
+                self.assertTrue(validator.validate_script_repository(fixture, repository))
+                # A matching URL elsewhere must not hide a wrong plan binding.
+                with fixture.open('a', encoding='utf-8') as output:
+                    output.write('\n// '+repository+'\n')
+                self.assertTrue(validator.validate_script_repository(fixture, repository))
+                self.assertTrue(validator.validate_script_repository(script, ''))
 
 
 class SourcePackaging(unittest.TestCase):

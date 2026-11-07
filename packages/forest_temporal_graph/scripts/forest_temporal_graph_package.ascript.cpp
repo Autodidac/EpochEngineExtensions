@@ -22,7 +22,7 @@ namespace
         "forest_temporal_graph",
         "1",
         "cache/packages/forest_temporal_graph",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/forest_temporal_graph",
         true,
         true,

@@ -22,7 +22,7 @@ namespace
         "voxel_authoring_tools",
         "1",
         "cache/packages/voxel_authoring_tools",
-        "https://github.com/Autodidac/EpochEngineExtensions",
+        "https://epoch.adamrushford.chatgpt.site/git/EpochEngineExtensions.git",
         "packages/voxel_authoring_tools",
         true,
         true,
