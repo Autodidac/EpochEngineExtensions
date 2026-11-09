@@ -170,13 +170,24 @@ namespace
                             });
                         jobs.push_back({entry.key,std::move(task)});
                     }
-                    auto result=jobs.front().task.completion.get();
+                    // Refill a completed read's slot even when an earlier
+                    // read is slow. Restoration below still follows the plan,
+                    // and every read retires before obsolete files are removed.
+                    const auto ready=std::ranges::find_if(jobs,[](const CacheJob& job) {
+                        return job.task.completion.wait_for(std::chrono::milliseconds{0})==std::future_status::ready;
+                    });
+                    if(ready==jobs.end())
+                    {
+                        (void)jobs.front().task.completion.wait_for(std::chrono::milliseconds{1});
+                        continue;
+                    }
+                    auto result=ready->task.completion.get();
                     if(!result.valid){retire();return false;}
                     if(result.mesh)
                     {
-                        decoded.push_back({jobs.front().key,std::move(*result.mesh)});
+                        decoded.push_back({ready->key,std::move(*result.mesh)});
                     }
-                    jobs.erase(jobs.begin());(void)scheduler.maintain();
+                    jobs.erase(ready);(void)scheduler.maintain();
                 }
             }
             catch(...){retire();throw;}
@@ -257,7 +268,15 @@ namespace
         const auto origin=state.world.center(state.request.body_index,state.request.seconds);
         // epoch.planet.stream-frame.v1: retain metre-scale fine geometry near
         // the admitted camera; planner/cache coordinates remain body-local.
-        const auto artifact_origin=metric_frame?state.request.camera-origin:core::DVec3{};
+        // epoch.planet.stream-origin.v2: shared, bounded metric origin. Near
+        // the surface it remains the exact camera; a far-orbit camera cannot
+        // push otherwise valid terrain outside the mesh codec's position range.
+        const auto camera_origin=state.request.camera-origin;
+        const auto metric_origin=patches::metric_source_origin(
+            {camera_origin.x,camera_origin.y,camera_origin.z},true);
+        if(metric_frame&&!metric_origin)return 5;
+        const auto artifact_origin=metric_frame?core::DVec3{
+            (*metric_origin)[0],(*metric_origin)[1],(*metric_origin)[2]}:core::DVec3{};
         const double scale=metric_frame?1.0:10.0/state.world.body(state.request.body_index).radius;
         const auto& world=state.world.config();const bool sized=world!=core::WorldConfig{};
         std::string key;

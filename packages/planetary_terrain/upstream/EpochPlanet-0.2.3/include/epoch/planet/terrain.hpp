@@ -49,7 +49,7 @@ struct LodSettings {
 // An explicit camera up enables forward, 45-degree camera-down (including roll),
 // and body-radial nadir rays. Only hit ancestry bypasses the view cone; all three
 // share the existing detail/leaf budgets. With altitude, a smooth cubic weight
-// trades these hits for a broad central quarter-vertical-FOV region. Transition
+// trades these hits for the broad circumscribed viewport cone. Transition
 // bounds scale with body radius (Earth: 5km to 100km above the visible surface).
 // Omitting up retains the original single-ray policy exactly.
 struct TerrainView { DVec3 forward{};double aspect_ratio=16.0/9.0;std::optional<DVec3> up{}; };
