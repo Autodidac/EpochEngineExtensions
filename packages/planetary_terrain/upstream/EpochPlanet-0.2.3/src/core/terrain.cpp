@@ -388,7 +388,7 @@ static TerrainPlan plan_terrain_impl(const Universe& world,DVec3 camera,double s
                 const double separation=std::acos(std::clamp(dot(to_center/center_distance,refinement_view->forward),-1.0,1.0));
                 const double angular_extent=std::asin(std::min(1.0,extent/center_distance));
                 if(separation>cone_angle+angular_extent&&!footprint_focus)return {k,0.0,false};
-                const double offset=std::clamp((separation-angular_extent-fov*.25)/(fov*.25),0.0,1.0);
+                const double offset=std::clamp((separation-angular_extent-cone_angle*.75)/(cone_angle*.25),0.0,1.0);
                 central_weight=1.0-offset*offset*(3.0-2.0*offset);
             }
         }
@@ -434,7 +434,7 @@ static TerrainPlan plan_terrain_impl(const Universe& world,DVec3 camera,double s
         // Spend up to two additional levels on ray-hit tiles. The authored
         // maximum level, complete balanced cut and fixed leaf budget still win.
         if(refinement_view&&refinement_view->up) {
-            // From orbit, spread detail across the central quarter-FOV region.
+            // From orbit, spread detail across the circumscribed viewport cone.
             // Smoothly trade that region for the three ray hits near the ground;
             // The queue's attention weight is continuous across that trade;
             // the orbital plateau covers a region rather than one ray ancestry.

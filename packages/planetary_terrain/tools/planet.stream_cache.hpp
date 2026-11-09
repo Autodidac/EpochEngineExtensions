@@ -66,8 +66,10 @@ namespace planet_stream_cache
         else
         {
             static_assert(std::is_unsigned_v<T>);
-            for(std::size_t i=0;i<sizeof(T);++i) output.put(static_cast<char>((value>>(i*8u))&0xffu));
-            return static_cast<bool>(output);
+            std::array<char,sizeof(T)> bytes{};
+            for(std::size_t i=0;i<sizeof(T);++i) bytes[i]=static_cast<char>((value>>(i*8u))&0xffu);
+            output.write(bytes.data(),static_cast<std::streamsize>(bytes.size()));
+            return output.good();
         }
     }
     template<class T> bool read_scalar(std::istream& input,T& value)

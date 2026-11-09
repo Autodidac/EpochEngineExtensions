@@ -245,14 +245,14 @@ static int run(int argc,char**argv) {
         const auto rolled=p::plan_body_terrain(world,0,eye,0,1080,fov,settings,nullptr,true,{forward,16./9.,right});
         require(rolled.leaves==broad.leaves,"orbital cut still depends on the camera-down ray");
         unsigned minimum=20u,maximum{};std::vector<p::TileKey> sampled;
-        for(const double x:{-.15,0.,.15})for(const double y:{-.15,0.,.15}) {
+        for(const double x:{-.75,0.,.75})for(const double y:{-.45,0.,.45}) {
             const auto ray=p::normalized(forward+right*std::tan(fov*x)+up*std::tan(fov*y));
             const auto hit=local_hit(body,localEye,ray,altitude*2.);
             const auto key=nearest(broad,hit);
             minimum=std::min(minimum,unsigned(key.level));maximum=std::max(maximum,unsigned(key.level));
             if(std::find(sampled.begin(),sampled.end(),key)==sampled.end())sampled.push_back(key);
         }
-        require(maximum<=minimum+2u,"orbital central region collapsed to a single detail point");
+        require(maximum<=minimum+2u,"orbital visible region collapsed to a single detail point");
         require(sampled.size()>=4u,"orbital central region did not span multiple refined tiles");
         if(!first)out<<',';first=false;
         out<<"{\"face\":"<<face<<",\"altitude_meters\":"<<altitude<<",\"minimum_region_level\":"<<minimum
